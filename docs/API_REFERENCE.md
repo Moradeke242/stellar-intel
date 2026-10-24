@@ -33,6 +33,7 @@ the hardening contract (see `lib/api/v1.ts`):
   - [`GET /api/v1/anchor-health/ledger`](#get-apiv1anchor-healthledger)
   - [`GET /api/v1/anchors/census`](#get-apiv1anchorscensus)
   - [`GET /api/v1/anchors/{id}/health`](#get-apiv1anchorsidhealth)
+  - [`GET /api/v1/anchors/{id}/price-history`](#get-apiv1anchorsidprice-history)
 - **Intent**
   - [`POST /api/intent`](#post-apiintent)
   - [`POST /api/intent/offramp`](#post-apiintentofframp)
@@ -185,6 +186,32 @@ Returns the anchor's current health status, last-probe timestamp, and score brea
 | `400` | Invalid anchor ID | `application/json` | `ApiError` |
 | `404` | Anchor not found | `application/json` | `ApiError` |
 | `429` | Rate limit exceeded | `application/json` | `object` |
+
+---
+
+### `GET /api/v1/anchors/{id}/price-history`
+
+**Summary:** Get anchor SEP-38 price history  
+
+Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).
+
+#### Parameters
+
+| Name | In | Type | Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | `path` | `string` | **Yes** | Anchor identifier |
+| `corridor` | `query` | `string` | No | Corridor id served by the anchor (default: first corridor) |
+| `days` | `query` | `integer` | No | Lookback window in days, 1–90 (default 7) |
+
+#### Responses
+
+| Status | Description | Content-Type | Schema |
+| :--- | :--- | :--- | :--- |
+| `200` | Price history series | `application/json` | `object` |
+| `400` | Invalid params or corridor not served | `application/json` | `ApiError` |
+| `404` | Unknown anchor | `application/json` | `ApiError` |
+| `429` | Rate limit exceeded | `application/json` | `ApiError` |
+| `503` | Quote store unavailable | `application/json` | `ApiError` |
 
 ---
 

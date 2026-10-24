@@ -1328,6 +1328,142 @@
         }
       }
     },
+    "/api/v1/anchors/{id}/price-history": {
+      "get": {
+        "summary": "Get anchor SEP-38 price history",
+        "description": "Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).",
+        "tags": [
+          "Anchors"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Anchor identifier"
+            },
+            "required": true,
+            "description": "Anchor identifier",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Corridor id served by the anchor (default: first corridor)"
+            },
+            "required": false,
+            "description": "Corridor id served by the anchor (default: first corridor)",
+            "name": "corridor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "description": "Lookback window in days, 1–90 (default 7)",
+              "example": 7
+            },
+            "required": false,
+            "description": "Lookback window in days, 1–90 (default 7)",
+            "name": "days",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price history series",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "anchorId": {
+                      "type": "string"
+                    },
+                    "corridor": {
+                      "type": "string"
+                    },
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "observedAt": {
+                            "type": "string"
+                          },
+                          "price": {
+                            "type": "string"
+                          },
+                          "totalPrice": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "observedAt",
+                          "price",
+                          "totalPrice",
+                          "source"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "anchorId",
+                    "corridor",
+                    "points"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid params or corridor not served",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown anchor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Quote store unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reputation/{anchor}": {
       "get": {
         "summary": "Get anchor reputation",

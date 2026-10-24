@@ -15,6 +15,8 @@ export {
   type OfframpRoute,
   type AnchorHealth,
   type AnchorHealthLedgerArtifact,
+  type AnchorPriceHistory,
+  type AnchorPricePoint,
   type AnchorHealthLedgerEntry,
   type CorridorVolumeSavings,
 } from './types.js';

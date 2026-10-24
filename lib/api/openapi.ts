@@ -511,6 +511,76 @@ registry.registerPath({
 
 registry.registerPath({
   method: 'get',
+  path: '/api/v1/anchors/{id}/price-history',
+  summary: 'Get anchor SEP-38 price history',
+  description:
+    'Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).',
+  tags: ['Anchors'],
+  request: {
+    params: z.object({
+      id: z.string().min(1).describe('Anchor identifier'),
+    }),
+    query: z.object({
+      corridor: z
+        .string()
+        .optional()
+        .openapi({
+          param: { name: 'corridor', in: 'query' },
+          description: 'Corridor id served by the anchor (default: first corridor)',
+        }),
+      days: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(90)
+        .optional()
+        .openapi({
+          param: { name: 'days', in: 'query' },
+          description: 'Lookback window in days, 1–90 (default 7)',
+          example: 7,
+        }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Price history series',
+      content: {
+        'application/json': {
+          schema: z.object({
+            anchorId: z.string(),
+            corridor: z.string(),
+            points: z.array(
+              z.object({
+                observedAt: z.string(),
+                price: z.string(),
+                totalPrice: z.string(),
+                source: z.string(),
+              })
+            ),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Invalid params or corridor not served',
+      content: { 'application/json': { schema: ApiErrorSchema } },
+    },
+    404: {
+      description: 'Unknown anchor',
+      content: { 'application/json': { schema: ApiErrorSchema } },
+    },
+    429: {
+      description: 'Rate limit exceeded',
+      content: { 'application/json': { schema: ApiErrorSchema } },
+    },
+    503: {
+      description: 'Quote store unavailable',
+      content: { 'application/json': { schema: ApiErrorSchema } },
+    },
+  },
+});
+registry.registerPath({
+  method: 'get',
   path: '/api/reputation/{anchor}',
   summary: 'Get anchor reputation',
   description:
