@@ -18,6 +18,7 @@ function makeBootstrapRow(anchorId: string, corridor: string, now: Date): Outcom
     intentHash: bootstrapIntentHash(anchorId, corridor),
     anchorId,
     corridor,
+    direction: 'withdraw',
     quotedRate: '1.0',
     deliveredRate: null,
     quotedAmount: '0',

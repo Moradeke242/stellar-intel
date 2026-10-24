@@ -55,7 +55,7 @@ export async function generateMetadata({
 
 async function loadAnchorRows(anchorId: string) {
   try {
-    return await getReputationStore().query({ anchorId });
+    return await getReputationStore().query({ anchorId, direction: 'withdraw' });
   } catch (error) {
     // No durable store configured — `next build` prerenders this page with
     // NODE_ENV=production and no DATABASE_URL, which is expected, not a fault.

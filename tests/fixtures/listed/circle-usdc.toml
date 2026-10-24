@@ -1,0 +1,10 @@
+# Source: https://centre.io/.well-known/stellar.toml (fetched )
+[DOCUMENTATION]
+ORG_NAME = "Centre Consortium LLC"
+ORG_URL = "https://www.centre.io"
+
+[[CURRENCIES]]
+code = "USDC"
+issuer = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
+anchor_asset_type = "fiat"
+anchor_asset = "USD"

@@ -10,6 +10,7 @@
  * All arithmetic uses explicit rounding to avoid sub-cent comparisons.
  */
 
+import { compareDecimals } from '@/lib/decimal';
 import type { AnchorRate, RateComparison } from '@/types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -147,4 +148,42 @@ function resolvedNetReceived(rate: AnchorRate, precision: number): number {
   const raw = rate.totalReceived;
   const factor = 10 ** precision;
   return Math.round(raw * factor) / factor;
+}
+
+// ─── Min receive ─────────────────────────────────────────────────────────────
+
+/**
+ * Floor tolerance applied to the expected net received amount when verifying
+ * the anchor's own `amount_out` estimate before the user signs the payment (2%).
+ */
+export const MIN_RECEIVE_TOLERANCE = 0.02;
+
+export type MinReceiveCheck =
+  | { ok: true; reason: 'no_floor' | 'no_estimate' | 'meets_floor' }
+  | { ok: false; amountOut: string; minReceive: string };
+
+const DECIMAL_STRING = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
+
+function isDecimalString(value: string | undefined): value is string {
+  return value !== undefined && DECIMAL_STRING.test(value.trim());
+}
+
+/**
+ * Checks the anchor's own `amount_out` estimate against the minimum acceptable
+ * receive amount. Amounts are compared as exact decimals, never as floats.
+ *
+ * - No usable `minReceive`: `ok` with `no_floor`.
+ * - No usable `amountOut`: `ok` with `no_estimate`, so the caller can continue
+ *   and tell the user the final amount is set by the anchor.
+ * - `amountOut` below `minReceive`: not ok, with both figures for the message.
+ * - Otherwise: `ok` with `meets_floor`.
+ */
+export function checkMinReceive(
+  amountOut: string | undefined,
+  minReceive: string | undefined
+): MinReceiveCheck {
+  if (!isDecimalString(minReceive)) return { ok: true, reason: 'no_floor' };
+  if (!isDecimalString(amountOut)) return { ok: true, reason: 'no_estimate' };
+  if (compareDecimals(amountOut, minReceive) < 0) return { ok: false, amountOut, minReceive };
+  return { ok: true, reason: 'meets_floor' };
 }

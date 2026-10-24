@@ -18,6 +18,7 @@ function row(overrides: Partial<OutcomeLogRow> = {}): OutcomeLogRow {
     intentHash: Math.random().toString(16).slice(2),
     anchorId: 'cowrie',
     corridor: 'ngnt-ngn',
+    direction: 'withdraw',
     quotedRate: '1500',
     deliveredRate: null,
     quotedAmount: '100',

@@ -1,0 +1,10 @@
+# Source: https://rawjuiceguru.com/.well-known/stellar.toml (fetched 2026-10-23)
+[DOCUMENTATION]
+ORG_NAME = "Raw Guru Juice Co."
+ORG_URL = "https://rawjuiceguru.com"
+
+[[CURRENCIES]]
+code = "RJG"
+issuer = "GCXIOFIBGBHNTKERREDKDECDCOS2JF3W4P2T5GDKSX27QIIASQFAJPTW"
+anchor_asset_type = "fiat"
+anchor_asset = "CAD/100"

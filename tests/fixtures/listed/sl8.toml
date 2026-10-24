@@ -1,0 +1,297 @@
+# Source: https://sl8.online/.well-known/stellar.toml (fetched 2026-10-22)
+[DOCUMENTATION]
+ORG_NAME = "Cassator Corp."
+ORG_URL = "https://sl8.online"
+
+[[CURRENCIES]]
+code = "SLX"
+issuer = "GBCI6LM7XXEM44OLMEV53WZXKEUQCACURK4NZIHRJN7PAOIYKV7VVXPV"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SSLX"
+issuer = "GBHFGY3ZNEJWLNO4LBUKLYOCEK4V7ENEBJGPRHHX7JU47GWHBREH37UR"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "UAF"
+issuer = "GDT5EUZMXIABSKZAQA4HNTWYOJI2D64DATP6KNVTV4WDZJ3K7FZDRC5E"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GEAGLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SEAGLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GBUFFALO"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GMAPLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GBRIT"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GLHORSE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GPHIL"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GEAGLE70"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GBUFFALO70"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GEAGLE10"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GPAMP250"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SEAGLE70"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SPAMP250"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGEIGER100"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGEIGER50"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGEIGER1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGEIGER10"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGEIGER2G5"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER100OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER1KG"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER500"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER10OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER50"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER20"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SGEIGER10"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SUKRCONST1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SUSA250"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SMICHAEL1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SKOZAK1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GGATE1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GENEIDA"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GORANTA"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "GTOMOS1OZ"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SBUFFALO"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SMAPLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SKRUG"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SPHIL"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SLIBERTAD"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SBRIT"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SKANGAROO"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "SCOKE25"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "PTEAGLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "PTMAPLE"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "PTPHIL"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "PTKANGAROO"
+issuer = "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7"
+anchor_asset_type = "crypto"
+anchor_asset = "USDC"
+
+[[CURRENCIES]]
+code = "STARDUST"
+issuer = "GCPLNANLXTV2G6NPIRDPOLM5NAO5XH2IPYQBZCTTAKPNV4IRTU5X5B4S"
+

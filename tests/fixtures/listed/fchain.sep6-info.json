@@ -1,0 +1,96 @@
+{
+  "deposit": {
+    "BCH": {
+      "enabled": true
+    },
+    "USDT": {
+      "enabled": true
+    },
+    "WICC": {
+      "enabled": true
+    },
+    "XRP": {
+      "enabled": true
+    },
+    "STM": {
+      "enabled": true
+    },
+    "ETH": {
+      "enabled": false
+    }
+  },
+  "withdraw": {
+    "BCH": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    },
+    "ETH": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    },
+    "USDT": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    },
+    "WICC": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    },
+    "XRP": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    },
+    "STM": {
+      "enabled": true,
+      "types": {
+        "crypto": {
+          "fields": {
+            "address": {
+              "description": "Destination address"
+            }
+          }
+        }
+      }
+    }
+  }
+}

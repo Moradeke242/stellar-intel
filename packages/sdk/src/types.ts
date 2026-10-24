@@ -67,6 +67,21 @@ export interface AnchorHealth {
   stale: boolean;
 }
 
+/** One recorded SEP-38 indicative price. Amounts are decimal strings. */
+export interface AnchorPricePoint {
+  observedAt: string;
+  price: string;
+  totalPrice: string;
+  source: string;
+}
+
+export interface AnchorPriceHistory {
+  anchorId: string;
+  corridor: string;
+  /** Oldest first, at most 500 points. */
+  points: AnchorPricePoint[];
+}
+
 export interface CorridorVolumeSavings {
   corridorId: string;
   /** Cumulative volume routed through the corridor, in microUSDC. */
@@ -150,6 +165,7 @@ export const OPERATIONS = {
   submitOfframpIntent: 'POST /api/v1/intent/offramp',
   getAnchorHealth: 'GET /api/v1/anchors/{id}/health',
   getAnchorHealthLedger: 'GET /api/v1/anchor-health/ledger',
+  getAnchorPriceHistory: 'GET /api/v1/anchors/{id}/price-history',
   getAnchorCensus: 'GET /api/v1/anchors/census',
   getCorridorVolumeSavings: 'GET /api/v1/corridors/{corridor}/volume-savings',
   getHealth: 'GET /api/v1/health',

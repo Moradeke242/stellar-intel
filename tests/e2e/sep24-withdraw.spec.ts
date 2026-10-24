@@ -163,7 +163,8 @@ test.describe('[#721] SEP-24 live execution flow (USDC→NGN corridor)', () => {
     });
 
     await page.goto(trackingUrl());
-    await page.waitForTimeout(5_000);
+    await expect(page.getByText('Delivered')).toBeVisible({ timeout: 60_000 });
+    await page.waitForLoadState('networkidle');
 
     expect(errors, `Unexpected JS errors: ${errors.join('; ')}`).toHaveLength(0);
   });

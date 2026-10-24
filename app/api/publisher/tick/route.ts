@@ -73,6 +73,7 @@ async function loadCorridorRates() {
          FROM outcome_log
         WHERE reconciled_at IS NOT NULL
           AND attested = TRUE
+          AND direction = 'withdraw'
         ORDER BY reconciled_at DESC
         LIMIT 5000`
     );

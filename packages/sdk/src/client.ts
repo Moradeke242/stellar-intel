@@ -8,6 +8,7 @@ import type {
   AnchorCensusResponse,
   AnchorHealth,
   AnchorHealthLedgerArtifact,
+  AnchorPriceHistory,
   CorridorVolumeSavings,
   OfframpIntentRequest,
   OfframpIntentResponse,
@@ -165,6 +166,26 @@ export class StellarIntelClient {
     return this.request<AnchorHealthLedgerArtifact>({
       method: 'GET',
       path: `/api/v1/anchor-health/ledger${query}`,
+    });
+  }
+
+  /**
+   * Recorded SEP-38 indicative prices for one anchor corridor, oldest first.
+   *
+   * `corridor` defaults to the anchor's first corridor; `days` is 1–90
+   * (server default 7).
+   */
+  async getAnchorPriceHistory(
+    anchorId: string,
+    options: { corridor?: string; days?: number } = {}
+  ): Promise<AnchorPriceHistory> {
+    const query = new URLSearchParams();
+    if (options.corridor) query.set('corridor', options.corridor);
+    if (options.days !== undefined) query.set('days', String(options.days));
+    const qs = query.size > 0 ? `?${query.toString()}` : '';
+    return this.request<AnchorPriceHistory>({
+      method: 'GET',
+      path: `/api/v1/anchors/${encodeURIComponent(anchorId)}/price-history${qs}`,
     });
   }
 

@@ -190,6 +190,22 @@ describe('StellarIntelClient — requests', () => {
     expect(fetchMock.mock.calls[0]![0]).toBe('https://api.test/api/v1/anchors/a%2Fb/health');
   });
 
+  it('builds the price-history path with its optional corridor and days', async () => {
+    const fetchMock = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
+      jsonResponse(200, { anchorId: 'a/b', corridor: 'usdc-ngn', points: [] })
+    );
+
+    const history = await makeClient(fetchMock as never).getAnchorPriceHistory('a/b', {
+      corridor: 'usdc-ngn',
+      days: 30,
+    });
+
+    expect(history.points).toEqual([]);
+    expect(fetchMock.mock.calls[0]![0]).toBe(
+      'https://api.test/api/v1/anchors/a%2Fb/price-history?corridor=usdc-ngn&days=30'
+    );
+  });
+
   it('strips a trailing slash from baseUrl', async () => {
     const fetchMock = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
       jsonResponse(200, { ok: true })

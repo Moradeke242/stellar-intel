@@ -1,0 +1,118 @@
+{
+  "id": "wisdomtree",
+  "name": "WisdomTree",
+  "kind": "issuer",
+  "domains": ["stellar.wisdomtree.com"],
+  "orgUrl": "https://www.wisdomtree.com",
+  "verifiedAt": "2026-09-23",
+  "assets": [
+    {
+      "code": "USD",
+      "issuer": "GC2ATEL4K2O5BJO7Z76MYSV6TKHCROKV5GXEOU7NO2TUEOOMFDDIPWID",
+      "anchorAssetType": "fiat",
+      "anchorAsset": "USD"
+    },
+    {
+      "code": "BTC",
+      "issuer": "GC33QUM35DONISNWLDPALVMIKGPT3MNDU3NJVNKR7K4NG3RWTKKBUQZA",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "BTC"
+    },
+    {
+      "code": "ETH",
+      "issuer": "GDJLBEEVGEPB42TCSEF4VYHSLQZJGZ6EUMXNOANI4G2XMTJCDBHF6P4Z",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "ETH"
+    },
+    {
+      "code": "GOLD",
+      "issuer": "GCK75CK3VX5L4ZLSD7HHNVA4L3LKGIAYWLCZO2IBNGOFTBV3HJBE2MPJ",
+      "anchorAssetType": "commodity",
+      "anchorAsset": "GOLD"
+    },
+    {
+      "code": "WTTS",
+      "issuer": "GBBV5CF7UPA2PYRPA632URLB55BWML7X4H33ZRCDWMTULOXDGPHJR5VI",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTTSX"
+    },
+    {
+      "code": "WTST",
+      "issuer": "GDEBI5X7J4IDXCSVV3KPFZIHQRCBVF3DAZMS5H7KYOBK45T6XYGDE77P",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTSTX"
+    },
+    {
+      "code": "FLTT",
+      "issuer": "GBTZKH3RNKW46XEZNCGZEBAGJISKDZKQXKSQ2N5G5SFX36TLWKKR6QJ6",
+      "anchorAssetType": "bond",
+      "anchorAsset": "FLTTX"
+    },
+    {
+      "code": "WTGX",
+      "issuer": "GDMBNMFJ3TRFLASJ6UGETFME3PJPNKPU24C7KFDBEBPQFG2CI6UC3JG6",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTGXX"
+    },
+    {
+      "code": "WTLG",
+      "issuer": "GAK7PE7DD4ZRJQN3VBCQFBKFV53JGUM2SQATQAKLFK6MVONPGNYK34XH",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTLGX"
+    },
+    {
+      "code": "WTSI",
+      "issuer": "GAD22PDBRFEMXAKPFDP4JGDFWKKD6VPXWUWEAXBS6ZYJYFFQDUN7HAFG",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTSIX"
+    },
+    {
+      "code": "WTSY",
+      "issuer": "GB3ZUC7FGDEEBXY3BDEJWMPNGBFA66YRI4QQT6PBO3ZT6F33S7RL36VF",
+      "anchorAssetType": "bond",
+      "anchorAsset": "WTSYX"
+    },
+    {
+      "code": "TIPS",
+      "issuer": "GAJ4KSYLVBJKQ4UBPKJJXPYWVIRZWVTIYRMHBXTHGCDS4XJXXYEUALVD",
+      "anchorAssetType": "bond",
+      "anchorAsset": "TIPSX"
+    },
+    {
+      "code": "EQTY",
+      "issuer": "GAKODZFS4MV36JGDTULJACWJKBJCO33CJTVTWSQFSUV7XLZJNXTDH6D6",
+      "anchorAssetType": "stock",
+      "anchorAsset": "EQTYX"
+    },
+    {
+      "code": "LNGV",
+      "issuer": "GAHOGWBAWNIKESGNNW7Y7JU5KL54HIEHJGY6Y5QLY6YR3J7WZIDHLC6D",
+      "anchorAssetType": "other",
+      "anchorAsset": "LNGVX"
+    },
+    {
+      "code": "MODR",
+      "issuer": "GANULT25TFO6V6BFWSEG4VSCR4QXBNHV5T344R2AFZEPE6B324LVLOOJ",
+      "anchorAssetType": "other",
+      "anchorAsset": "MODRX"
+    },
+    {
+      "code": "SPXU",
+      "issuer": "GDJBVX3QA5HJPBSAU5VIX2W6MC37NU4UFXPKEGK42SJCYN6AEQ4Z6COM",
+      "anchorAssetType": "stock",
+      "anchorAsset": "SPXUX"
+    },
+    {
+      "code": "TECH",
+      "issuer": "GDSAW27GPR7EWKPTFDPGN2WWZYUHBFKVDBLOUUEKSNKHID4ZWUVOBF5R",
+      "anchorAssetType": "stock",
+      "anchorAsset": "TECHX"
+    },
+    {
+      "code": "CRDT",
+      "issuer": "GBWMQUGPPLSC62YPGD5CEHATOQRQMNLNAV2TMEXJ4ZYOTY4TJD6J2P45",
+      "anchorAssetType": "stock",
+      "anchorAsset": "CRDYX"
+    }
+  ]
+}

@@ -362,6 +362,7 @@ export async function fetchPendingOutcomes(
      WHERE published_at IS NULL
        AND reconciled_at IS NOT NULL
        AND attested = TRUE
+       AND direction = 'withdraw'
      ORDER BY reconciled_at ASC
      LIMIT $1`,
     [limit]
@@ -774,6 +775,7 @@ async function getCorridorMedianRate(
       WHERE corridor = $1
         AND delivered_rate IS NOT NULL
         AND attested = TRUE
+        AND direction = 'withdraw'
       ORDER BY reconciled_at DESC
       LIMIT 100`,
     [corridor]

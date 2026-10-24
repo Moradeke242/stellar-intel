@@ -1,0 +1,320 @@
+{
+  "id": "sl8",
+  "name": "Sl8 (Cassator Corp.)",
+  "kind": "crypto-rails",
+  "domains": ["sl8.online", "slx.sl8.online", "sslx.sl8.online", "uaf.sl8.online"],
+  "orgUrl": "https://sl8.online",
+  "verifiedAt": "2026-09-23",
+  "cryptoRails": [
+    {
+      "sep": "sep6",
+      "transferServer": "https://stellar.sl8.online/sep6",
+      "depositAssets": ["SSLX", "SLX"],
+      "withdrawAssets": ["SSLX", "SLX"],
+      "withdrawTypes": ["bank_account", "cash"]
+    },
+    {
+      "sep": "sep24",
+      "transferServer": "https://stellar.sl8.online/sep24",
+      "depositAssets": ["SSLX", "SLX"],
+      "withdrawAssets": ["SSLX", "SLX"],
+      "withdrawTypes": ["bank_account", "cash"]
+    }
+  ],
+  "assets": [
+    {
+      "code": "SLX",
+      "issuer": "GBCI6LM7XXEM44OLMEV53WZXKEUQCACURK4NZIHRJN7PAOIYKV7VVXPV",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SSLX",
+      "issuer": "GBHFGY3ZNEJWLNO4LBUKLYOCEK4V7ENEBJGPRHHX7JU47GWHBREH37UR",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "UAF",
+      "issuer": "GDT5EUZMXIABSKZAQA4HNTWYOJI2D64DATP6KNVTV4WDZJ3K7FZDRC5E",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GEAGLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SEAGLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GBUFFALO",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GMAPLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GBRIT",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GLHORSE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GPHIL",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GEAGLE70",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GBUFFALO70",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GEAGLE10",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GPAMP250",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SEAGLE70",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SPAMP250",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGEIGER100",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGEIGER50",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGEIGER1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGEIGER10",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGEIGER2G5",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER100OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER1KG",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER500",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER10OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER50",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER20",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SGEIGER10",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SUKRCONST1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SUSA250",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SMICHAEL1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SKOZAK1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GGATE1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GENEIDA",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GORANTA",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "GTOMOS1OZ",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SBUFFALO",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SMAPLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SKRUG",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SPHIL",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SLIBERTAD",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SBRIT",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SKANGAROO",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "SCOKE25",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "PTEAGLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "PTMAPLE",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "PTPHIL",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "PTKANGAROO",
+      "issuer": "GA6U3A3WJREWMRNZX4XQBYV6U3QHWHGFM5ERYMQEB4EHFMAMBVVNCLZ7",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "USDC"
+    },
+    {
+      "code": "STARDUST",
+      "issuer": "GCPLNANLXTV2G6NPIRDPOLM5NAO5XH2IPYQBZCTTAKPNV4IRTU5X5B4S",
+      "anchorAssetType": null,
+      "anchorAsset": null
+    }
+  ]
+}

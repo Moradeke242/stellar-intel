@@ -12,6 +12,7 @@ function outcome(corridor: string, deliveredRate: string | null): OutcomeLogRow 
     intentHash: 'a'.repeat(64),
     anchorId: 'cowrie',
     corridor,
+    direction: 'withdraw',
     quotedRate: '1650',
     deliveredRate,
     quotedAmount: '100',

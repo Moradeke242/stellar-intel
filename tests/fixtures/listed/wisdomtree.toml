@@ -1,0 +1,113 @@
+# Source: https://stellar.wisdomtree.com/.well-known/stellar.toml (fetched 2026-09-23)
+
+[DOCUMENTATION]
+ORG_NAME = "WisdomTree, Inc."
+ORG_URL = "https://www.wisdomtree.com"
+
+[[CURRENCIES]]
+code = "USD"
+issuer = "GC2ATEL4K2O5BJO7Z76MYSV6TKHCROKV5GXEOU7NO2TUEOOMFDDIPWID"
+anchor_asset_type = "fiat"
+anchor_asset = "USD"
+
+[[CURRENCIES]]
+code = "BTC"
+issuer = "GC33QUM35DONISNWLDPALVMIKGPT3MNDU3NJVNKR7K4NG3RWTKKBUQZA"
+anchor_asset_type = "crypto"
+anchor_asset = "BTC"
+
+[[CURRENCIES]]
+code = "ETH"
+issuer = "GDJLBEEVGEPB42TCSEF4VYHSLQZJGZ6EUMXNOANI4G2XMTJCDBHF6P4Z"
+anchor_asset_type = "crypto"
+anchor_asset = "ETH"
+
+[[CURRENCIES]]
+code = "GOLD"
+issuer = "GCK75CK3VX5L4ZLSD7HHNVA4L3LKGIAYWLCZO2IBNGOFTBV3HJBE2MPJ"
+anchor_asset_type = "commodity"
+anchor_asset = "GOLD"
+
+[[CURRENCIES]]
+code = "WTTS"
+issuer = "GBBV5CF7UPA2PYRPA632URLB55BWML7X4H33ZRCDWMTULOXDGPHJR5VI"
+anchor_asset_type = "bond"
+anchor_asset = "WTTSX"
+
+[[CURRENCIES]]
+code = "WTST"
+issuer = "GDEBI5X7J4IDXCSVV3KPFZIHQRCBVF3DAZMS5H7KYOBK45T6XYGDE77P"
+anchor_asset_type = "bond"
+anchor_asset = "WTSTX"
+
+[[CURRENCIES]]
+code = "FLTT"
+issuer = "GBTZKH3RNKW46XEZNCGZEBAGJISKDZKQXKSQ2N5G5SFX36TLWKKR6QJ6"
+anchor_asset_type = "bond"
+anchor_asset = "FLTTX"
+
+[[CURRENCIES]]
+code = "WTGX"
+issuer = "GDMBNMFJ3TRFLASJ6UGETFME3PJPNKPU24C7KFDBEBPQFG2CI6UC3JG6"
+anchor_asset_type = "bond"
+anchor_asset = "WTGXX"
+
+[[CURRENCIES]]
+code = "WTLG"
+issuer = "GAK7PE7DD4ZRJQN3VBCQFBKFV53JGUM2SQATQAKLFK6MVONPGNYK34XH"
+anchor_asset_type = "bond"
+anchor_asset = "WTLGX"
+
+[[CURRENCIES]]
+code = "WTSI"
+issuer = "GAD22PDBRFEMXAKPFDP4JGDFWKKD6VPXWUWEAXBS6ZYJYFFQDUN7HAFG"
+anchor_asset_type = "bond"
+anchor_asset = "WTSIX"
+
+[[CURRENCIES]]
+code = "WTSY"
+issuer = "GB3ZUC7FGDEEBXY3BDEJWMPNGBFA66YRI4QQT6PBO3ZT6F33S7RL36VF"
+anchor_asset_type = "bond"
+anchor_asset = "WTSYX"
+
+[[CURRENCIES]]
+code = "TIPS"
+issuer = "GAJ4KSYLVBJKQ4UBPKJJXPYWVIRZWVTIYRMHBXTHGCDS4XJXXYEUALVD"
+anchor_asset_type = "bond"
+anchor_asset = "TIPSX"
+
+[[CURRENCIES]]
+code = "EQTY"
+issuer = "GAKODZFS4MV36JGDTULJACWJKBJCO33CJTVTWSQFSUV7XLZJNXTDH6D6"
+anchor_asset_type = "stock"
+anchor_asset = "EQTYX"
+
+[[CURRENCIES]]
+code = "LNGV"
+issuer = "GAHOGWBAWNIKESGNNW7Y7JU5KL54HIEHJGY6Y5QLY6YR3J7WZIDHLC6D"
+anchor_asset_type = "other"
+anchor_asset = "LNGVX"
+
+[[CURRENCIES]]
+code = "MODR"
+issuer = "GANULT25TFO6V6BFWSEG4VSCR4QXBNHV5T344R2AFZEPE6B324LVLOOJ"
+anchor_asset_type = "other"
+anchor_asset = "MODRX"
+
+[[CURRENCIES]]
+code = "SPXU"
+issuer = "GDJBVX3QA5HJPBSAU5VIX2W6MC37NU4UFXPKEGK42SJCYN6AEQ4Z6COM"
+anchor_asset_type = "stock"
+anchor_asset = "SPXUX"
+
+[[CURRENCIES]]
+code = "TECH"
+issuer = "GDSAW27GPR7EWKPTFDPGN2WWZYUHBFKVDBLOUUEKSNKHID4ZWUVOBF5R"
+anchor_asset_type = "stock"
+anchor_asset = "TECHX"
+
+[[CURRENCIES]]
+code = "CRDT"
+issuer = "GBWMQUGPPLSC62YPGD5CEHATOQRQMNLNAV2TMEXJ4ZYOTY4TJD6J2P45"
+anchor_asset_type = "stock"
+anchor_asset = "CRDYX"

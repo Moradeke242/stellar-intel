@@ -13,6 +13,7 @@ function outcome(overrides: Partial<OutcomeLogRow> = {}): OutcomeLogRow {
     intentHash: 'a'.repeat(64),
     anchorId: 'cowrie',
     corridor: 'usdc-ngn',
+    direction: 'withdraw',
     quotedRate: '1500',
     deliveredRate: '1500',
     quotedAmount: '100',

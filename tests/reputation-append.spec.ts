@@ -71,6 +71,28 @@ function req(body: unknown): NextRequest {
   });
 }
 
+describe('POST /api/reputation/append — direction (ONR031)', () => {
+  it('defaults an omitted direction to withdraw', async () => {
+    const res = await appendPOST(req(signed()));
+    expect(res.status).toBe(201);
+    const [row] = await store.query({ includeUnattested: true });
+    expect(row?.direction).toBe('withdraw');
+  });
+
+  it('accepts and stores direction: deposit', async () => {
+    const res = await appendPOST(req(signed({ direction: 'deposit' })));
+    expect(res.status).toBe(201);
+    const [row] = await store.query({ includeUnattested: true });
+    expect(row?.direction).toBe('deposit');
+    expect(await store.query({ direction: 'withdraw', includeUnattested: true })).toHaveLength(0);
+  });
+
+  it('rejects an unknown direction', async () => {
+    const res = await appendPOST(req(signed({ direction: 'sideways' })));
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('POST /api/reputation/append — attestation', () => {
   it('stores a validly signed row as attested with its signer', async () => {
     const res = await appendPOST(req(signed()));

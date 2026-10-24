@@ -37,6 +37,7 @@ The HTTP and GraphQL surfaces, their version guarantees, and their wire formats.
 Worked examples, client libraries, the MCP server, and webhook delivery.
 
 - Cookbook (docs/COOKBOOK.md)
+- On-ramp (docs/ONRAMP.md)
 - SDK (docs/SDK.md)
 - Stellar Intel — MCP Server (docs/MCP.md)
 - Webhooks (docs/WEBHOOKS.md)
@@ -935,11 +936,13 @@ the hardening contract (see `lib/api/v1.ts`):
   - [`GET /api/v1/anchor-health/ledger`](#get-apiv1anchor-healthledger)
   - [`GET /api/v1/anchors/census`](#get-apiv1anchorscensus)
   - [`GET /api/v1/anchors/{id}/health`](#get-apiv1anchorsidhealth)
+  - [`GET /api/v1/anchors/{id}/price-history`](#get-apiv1anchorsidprice-history)
 - **Intent**
   - [`POST /api/intent`](#post-apiintent)
   - [`POST /api/intent/offramp`](#post-apiintentofframp)
   - [`POST /api/v1/intent/offramp`](#post-apiv1intentofframp)
 - **Rates**
+  - [`GET /api/deposit-rates/{corridor}`](#get-apideposit-ratescorridor)
   - [`GET /api/rates/{corridor}`](#get-apiratescorridor)
   - [`GET /api/snapshot`](#get-apisnapshot)
   - [`GET /api/v1/corridors/{corridor}/volume-savings`](#get-apiv1corridorscorridorvolume-savings)
@@ -1089,6 +1092,32 @@ Returns the anchor's current health status, last-probe timestamp, and score brea
 
 ---
 
+### `GET /api/v1/anchors/{id}/price-history`
+
+**Summary:** Get anchor SEP-38 price history  
+
+Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).
+
+#### Parameters
+
+| Name | In | Type | Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | `path` | `string` | **Yes** | Anchor identifier |
+| `corridor` | `query` | `string` | No | Corridor id served by the anchor (default: first corridor) |
+| `days` | `query` | `integer` | No | Lookback window in days, 1–90 (default 7) |
+
+#### Responses
+
+| Status | Description | Content-Type | Schema |
+| :--- | :--- | :--- | :--- |
+| `200` | Price history series | `application/json` | `object` |
+| `400` | Invalid params or corridor not served | `application/json` | `ApiError` |
+| `404` | Unknown anchor | `application/json` | `ApiError` |
+| `429` | Rate limit exceeded | `application/json` | `ApiError` |
+| `503` | Quote store unavailable | `application/json` | `ApiError` |
+
+---
+
 ## Intent
 
 ### `POST /api/intent`
@@ -1162,6 +1191,31 @@ The public v1 intent endpoint. Honours `Idempotency-Key`: a retried request repl
 ---
 
 ## Rates
+
+### `GET /api/deposit-rates/{corridor}`
+
+**Summary:** Get indicative deposit (on-ramp) estimates for a corridor  
+
+Returns per-anchor SEP-24 deposit estimates for the given corridor: fiat in, asset credited net of published fees, with per-anchor failures isolated into `errors`. Every figure is indicative; the anchor sets the firm conversion inside its interactive deposit flow.
+
+#### Parameters
+
+| Name | In | Type | Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `corridor` | `path` | `string` | **Yes** | Corridor ID (e.g. usdc-ngn, usdc-kes) |
+| `amount` | `query` | `string` | No | Fiat amount to deposit (positive decimal); defaults to 100 |
+| `asset` | `query` | `string` | No | SEP-38 asset identifier to credit; defaults to the corridor's asset |
+
+#### Responses
+
+| Status | Description | Content-Type | Schema |
+| :--- | :--- | :--- | :--- |
+| `200` | Deposit estimates for the corridor | `application/json` | `DepositRateComparison` |
+| `400` | Unknown corridor or invalid amount | `application/json` | `ApiError` |
+| `429` | Rate limited | `application/json` | `ApiError` |
+| `502` | The deposit estimate could not be computed | `application/json` | `ApiError` |
+
+---
 
 ### `GET /api/rates/{corridor}`
 
@@ -1900,20 +1954,83 @@ curl -sX POST https://stellar-intel.vercel.app/api/intent/offramp \
   }'
 ```
 
+## On-ramp — `POST /api/v1/intent/onramp`
+
+> **Status.** The `OnrampIntent` schema below is shipped
+> (`OnrampIntentSchema` in [`types/intent.ts`](../types/intent.ts), re-exported
+> from [`lib/intent/onramp-schema.ts`](../lib/intent/onramp-schema.ts)). The
+> endpoint itself is **not live yet**; the request body is final, the response
+> fields are the planned contract. The full deposit flow — preflight/trustline,
+> SEP-10, interactive deposit, payment, tracking — is in
+> [`docs/ONRAMP.md`](ONRAMP.md).
+
+The on-ramp intent is the mirror image of the off-ramp intent: the user pays in
+fiat and the anchor credits a Stellar asset. It is a distinct schema with
+`type: "onramp"` (not a `CanonicalIntentV1` `kind`), and it carries the
+Stellar `destination` that the anchor credits, which the off-ramp's free-form
+`recipient` does not.
+
+### Payload — `OnrampIntent`
+
+| Field              | Type   | Required | Rule                                                                   |
+| ------------------ | ------ | -------- | ---------------------------------------------------------------------- |
+| `type`             | string | yes      | Literal `"onramp"` — the off-ramp discriminator is rejected.           |
+| `sourceAsset`      | string | yes      | Non-empty; the fiat paid in (e.g. `NGN`).                              |
+| `destinationAsset` | string | yes      | Non-empty; the Stellar asset bought (e.g. `USDC`).                     |
+| `amount`           | string | yes      | Positive decimal string (`/^\d+(\.\d+)?$/`, `parseFloat > 0`).         |
+| `sender`           | string | yes      | Non-empty; the fiat rail's reference (bank account, wallet, agent id). |
+| `destination`      | string | yes      | Stellar public key (`G…`, 56 chars); rejects muxed `M…` accounts.      |
+| `depositMethod`    | enum   | yes      | `bank_transfer`, `cash`, `mobile_money` or `card`.                     |
+| `memo`             | string | no       | Non-empty when present; attributing memo for pooled-account anchors.   |
+| `memoType`         | enum   | no       | `text`, `id` or `hash`; required together with `memo`.                 |
+
+Memo rules (enforced by `superRefine`): `memo` and `memoType` must be supplied
+together; a `text` memo must be at most 28 bytes once UTF-8 encoded; an `id`
+memo must be an unsigned 64-bit integer; a `hash` memo must be 64 lowercase
+hex characters. A `type` of `"offramp"` is rejected, as is a non-`G…`
+`destination`.
+
+```jsonc
+// request
+{
+  "type": "onramp",
+  "sourceAsset": "NGN",
+  "destinationAsset": "USDC",
+  "amount": "150000.00",
+  "sender": "NG123456789012345678",
+  "destination": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "depositMethod": "bank_transfer",
+}
+// response (planned)
+{
+  "intentId": "onramp_intent_9a4f21",
+  "status": "pending_trustline",
+  "unsignedChangeTrustXdr": "AAAAAgAAAABn...",
+  "handoffUrl": "https://cowrie.exchange/sep24/deposit?transaction_id=...",
+  "createdAt": "2026-10-17T12:05:00Z",
+}
+```
+
+The planned response returns a `handoffUrl` (the anchor's hosted SEP-24
+deposit page) and, when the destination lacks a trustline for the asset, an
+`unsignedChangeTrustXdr` for the user to sign. `unsignedChangeTrustXdr` is
+`null` when no trustline change is needed. Neither field is produced today.
+
 ## `IntentV1` — canonical router primitive
 
 `types/intent.ts` also exports `IntentV1Schema` / `IntentV1` (re-exported from
 `lib/intent/schema.ts`), the richer canonical intent the router consumes. The
 off-ramp envelope above is the v1 path wired into the UI today; `IntentV1` is the
-shape the multi-anchor router (see [`docs/ROADMAP.md`](ROADMAP.md), Wave 1.2 /
-v2.2) scores and splits across anchors.
+shape the multi-anchor router (see [Wave 1.2 — Router + Seeds](ROADMAP.md#wave-12--router--seeds))
+scores and splits across anchors.
 
-## Canonical Intent V1 — versioned superset
+## Canonical Intent V1 — type definitions (not accepted by `/api/intent/offramp`)
 
-`CanonicalIntentV1Schema` in `types/intent.ts` is the **versioned superset** that
-covers all intent kinds in one discriminated union. It is what `POST /api/intent/offramp`
-parses after #817. Off-ramp-only clients that omit `kind` are accepted unchanged; the
-endpoint injects `kind: "offramp"` automatically.
+`CanonicalIntentV1Schema` and its related schemas are defined in `types/intent.ts`
+and re-exported from `lib/intent/schema.ts` for router and SDK use. They are not
+accepted by `POST /api/intent/offramp`, which accepts only the flat `IntentSchema`
+shape documented above. Sending `kind` without `type: "offramp"` to this endpoint
+returns 400 `VALIDATION_ERROR`.
 
 ### Common fields (all kinds)
 
@@ -1929,8 +2046,7 @@ endpoint injects `kind: "offramp"` automatically.
 
 ### `kind: "offramp"` (single off-ramp)
 
-Backwards-compatible with legacy clients that send `type: "offramp"` or omit `kind`.
-No additional fields beyond the common base.
+Represents a single off-ramp using the common fields, with `kind` set to `"offramp"`.
 
 ```jsonc
 {
@@ -1992,8 +2108,7 @@ Each `IntentHop`:
 
 ### `kind: "recurring"` (scheduled)
 
-Repeats a payment on a cron schedule. The endpoint will reject this kind with
-`501 NOT_IMPLEMENTED` until the scheduler service is wired up.
+Represents a payment that repeats on a cron schedule.
 
 Additional field:
 
@@ -2028,6 +2143,7 @@ Additional field:
 ## Related
 
 - [`docs/CANONICAL_JSON.md`](CANONICAL_JSON.md) — the exact canonicalization rules.
+- [`docs/ONRAMP.md`](ONRAMP.md) — the on-ramp flow and its planned endpoints.
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) — where the intent sits in the flow.
 - [`docs/ANCHOR_REPUTATION.md`](ANCHOR_REPUTATION.md) — how outcomes feed scoring.
 
@@ -2539,6 +2655,224 @@ stellar.expert directory, top asset home domains and the SDF Anchor Directory),
 then classifies each domain by SEP support — see
 [`docs/SEP_COMPLIANCE.md`](SEP_COMPLIANCE.md).
 
+<!-- source: docs/ONRAMP.md -->
+
+# On-ramp
+
+**Last reviewed:** 2026-10-19
+
+An on-ramp is the opposite direction from the off-ramp intent documented in
+[`docs/INTENT_API.md`](INTENT_API.md): the user pays in local fiat — a bank
+transfer, cash, mobile money or a card — and a Stellar anchor credits a
+Stellar asset such as USDC to the user's account. Stellar Intel never holds
+the fiat, never holds the asset, and never holds a key. It resolves an anchor,
+prepares the pieces the user signs, and tracks the anchor's own SEP flow.
+
+> **Status.** The on-ramp intent schema and the SEP-24 deposit primitives are
+> shipped, and the `intel.onramp.quote` and `intel.onramp.prepare` MCP tools
+> are live on the hosted `/api/mcp` endpoint. The `GET /api/v1/onramp/quote`
+> and `POST /api/v1/intent/onramp` endpoints are **planned and not live yet** —
+> the planned contract is recorded here so the implementation has a target. The in-app guide at `/docs/onramp` carries the same status.
+
+| Piece                                                                                                                               | State               |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `OnrampIntentSchema` ([`types/intent.ts`](../types/intent.ts), [`lib/intent/onramp-schema.ts`](../lib/intent/onramp-schema.ts))     | Shipped             |
+| SEP-24 deposit primitives — `initiateDeposit`, `getSep24Info`, `fetchAnchorFee` ([`lib/stellar/sep24.ts`](../lib/stellar/sep24.ts)) | Shipped             |
+| On-ramp router hop — `createOnRampHop` ([`lib/router/connectors/on-ramp.ts`](../lib/router/connectors/on-ramp.ts))                  | Shipped             |
+| SEP-6 deposit request — `buildSep6DepositRequest`                                                                                   | **Not implemented** |
+| `GET /api/v1/onramp/quote`                                                                                                          | **Planned**         |
+| `POST /api/v1/intent/onramp`                                                                                                        | **Planned**         |
+| MCP `intel.onramp.quote`, `intel.onramp.prepare` ([`lib/mcp/onramp.ts`](../lib/mcp/onramp.ts))                                      | Shipped             |
+
+## Flow
+
+Once the anchor is chosen, a deposit runs through five stages. Everything
+after the intent is the anchor's SEP flow; Stellar Intel only prepares inputs
+and reads status.
+
+1. **Preflight / trustline.** Before an anchor can credit an issued asset
+   (USDC, or any non-native asset) to an account, that account must hold a
+   trustline for it. The planned intent response returns an
+   `unsignedChangeTrustXdr` when the destination lacks one, which the user
+   signs and submits with their own wallet. When the trustline already exists
+   the field is `null` and this stage is skipped. The repository does not yet
+   build this XDR — no `unsignedChangeTrustXdr` producer exists today, so the
+   field is part of the planned contract, not shipped behaviour.
+2. **SEP-10.** The anchor authenticates the user's Stellar key and issues a
+   JWT ([`lib/stellar/sep10.ts`](../lib/stellar/sep10.ts)). The JWT authorises
+   the deposit transaction but moves no funds and grants no custody.
+3. **Interactive deposit (SEP-24).** `initiateDeposit` POSTs to the anchor's
+   `TRANSFER_SERVER_SEP0024` `/transactions/deposit/interactive` and expects a
+   `interactive_customer_info_needed` response carrying a `url` and a
+   transaction `id`. The `url` is the anchor's hosted deposit page. SEP-24 is
+   the only deposit path wired today; the SEP-6 code in
+   [`lib/stellar/sep6.ts`](../lib/stellar/sep6.ts) is withdraw-oriented
+   (`buildSep6WithdrawRequest`).
+4. **Pay the anchor.** The user completes the anchor's hosted instructions —
+   bank transfer details, a cash-agent reference, mobile-money or card
+   fields — inside the anchor's page. The fiat leg moves directly between the
+   user and the anchor, outside Stellar Intel entirely.
+5. **Tracking.** Stellar Intel polls the anchor's SEP-24 `/transaction`
+   endpoint ([`lib/stellar/sep24.ts`](../lib/stellar/sep24.ts), used by
+   [`hooks/useWithdrawStatus.ts`](../hooks/useWithdrawStatus.ts)) with
+   exponential backoff (2s → ×1.5 → 30s cap). Polling resets on a status
+   change and stops on a terminal state (`completed`, `error`, `refunded`,
+   `expired`, `no_market`, `too_small`, `too_large`). The same polling hook
+   serves both directions; for the SEP-6 path the equivalent reader is
+   `getSep6Transaction`.
+
+## Quotes are indicative
+
+An on-ramp quote is an **estimate, not a binding price**, and the docs and UI
+label it that way. The rate source is modelled on `AnchorRate.source`
+([`types/index.ts`](../types/index.ts)):
+
+- `sep38` is the only firm, binding quote source — the anchor commits to the
+  price until `expiresAt`, and the id can be threaded into the SEP flow so the
+  anchor honours it.
+- `sep24-fee`, `sep6-info` and `sep6-fee` are estimates derived from the
+  anchor's published fee schedule and a reference FX rate.
+  `isIndicativeRateSource(source)` returns `true` for all three; the UI
+  renders them as "Indicative".
+
+Deposit quotes are derived from the anchor's SEP-24 `/fee` schedule and are
+therefore indicative by construction. Firm SEP-38 quotes are scarce on the
+live network, so a ranked on-ramp comparison today is a comparison of
+estimates. Treat the quoted amount as what the anchor's published schedule
+implies, not as a price the anchor has promised to honour.
+
+## Claimable balances
+
+Whether a deposit settles as a direct Stellar payment or as a claimable
+balance is the anchor's choice, advertised in its `/info` under
+`features.claimable_balances`. When the flag is `true` the anchor may create
+a `claimable_balance` entry that the destination account must claim before the
+funds are spendable, instead of paying the account directly; when it is `false`
+the anchor credits the account with a payment. Some anchors also advertise
+`features.account_creation` for destination accounts that do not exist yet.
+
+Stellar Intel captures both capability flags in its deposit fixtures
+([`tests/fixtures/onramp/`](../tests/fixtures/onramp/)) but does not yet parse
+or act on them, so treat them as advisory about how a settlement will land
+rather than something the app intermediates. A deposit credited into a
+claimable balance is only complete once the user's wallet claims it.
+
+## Limits
+
+Per-corridor deposit limits come from the anchor's own `/info`, not from
+Stellar Intel:
+
+- SEP-24: each deposit asset carries optional `min_amount` and `max_amount`
+  (`Sep24AssetInfo` in [`lib/stellar/sep24.ts`](../lib/stellar/sep24.ts)).
+- SEP-6: the same fields are normalised to `{ min, max }` by
+  `getSep6Info` (`Sep6WithdrawConfig` in
+  [`lib/stellar/sep6.ts`](../lib/stellar/sep6.ts)).
+
+Examples captured from live anchors include APS USDC `min_amount` 9.34 /
+`max_amount` 669.61 and NGNC `min_amount` 20000 / `max_amount` 20000000. The
+limits are per anchor, per asset, and can change without notice, so a caller
+should read them from the anchor rather than hard-code them. Stellar Intel
+enforces no limit of its own; the `OnrampIntentSchema` only requires `amount`
+to be a positive decimal string.
+
+## KYC is browser-only
+
+Identity collection happens inside the anchor's SEP-24 page, opened in a
+browser tab or in-app webview, and never inside Stellar Intel. Stellar Intel
+never sees the KYC data, never proxies it, and never stores it. This is the
+same non-custodial boundary as the off-ramp flow: the user signs, the anchor
+takes custody under SEP-24, and Stellar enforces atomicity.
+
+The practical consequence for agents is that **there is no on-ramp execute
+tool** in the MCP server — an agent can quote and prepare, but the user must
+complete KYC and payment in a browser. See [docs/MCP.md](MCP.md).
+
+## HTTP surface (planned)
+
+Neither endpoint is live yet. The request body matches the **shipped**
+`OnrampIntentSchema`; the response fields are the planned contract and may
+change before release.
+
+### `GET /api/v1/onramp/quote`
+
+```
+GET /api/v1/onramp/quote?sourceAsset=NGN&destinationAsset=USDC&amount=150000&depositMethod=bank_transfer
+```
+
+```jsonc
+{
+  "quoteId": "quote_onramp_8f419c",
+  "sourceAsset": "NGN",
+  "destinationAsset": "USDC",
+  "sourceAmount": "150000.00",
+  "destinationAmount": "95.60",
+  "rate": "1568.50",
+  "fee": {
+    "fixed": "500.00",
+    "percent": "0.5",
+  },
+  "anchor": {
+    "id": "cowrie",
+    "name": "Cowrie Exchange",
+    "domain": "cowrie.exchange",
+  },
+  "expiresAt": "2026-10-17T12:30:00Z",
+}
+```
+
+### `POST /api/v1/intent/onramp`
+
+```http
+POST /api/v1/intent/onramp
+Content-Type: application/json
+
+<OnrampIntent>
+```
+
+```jsonc
+// request
+{
+  "type": "onramp",
+  "sourceAsset": "NGN",
+  "destinationAsset": "USDC",
+  "amount": "150000.00",
+  "sender": "NG123456789012345678",
+  "destination": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "depositMethod": "bank_transfer",
+}
+// response (planned)
+{
+  "intentId": "onramp_intent_9a4f21",
+  "status": "pending_trustline",
+  "unsignedChangeTrustXdr": "AAAAAgAAAABn...",
+  "handoffUrl": "https://cowrie.exchange/sep24/deposit?transaction_id=...",
+  "createdAt": "2026-10-17T12:05:00Z",
+}
+```
+
+The full field table and validation rules are in
+[`docs/INTENT_API.md`](INTENT_API.md).
+
+## MCP tools
+
+Two on-ramp tools are specified but not registered. `intel.onramp.quote`
+returns an indicative quote across anchors and `intel.onramp.prepare` builds
+the unsigned intent and the anchor handoff URL. There is deliberately no
+execute tool: KYC and payment are browser-only. Details in
+[docs/MCP.md](MCP.md).
+
+## Related
+
+- [`docs/INTENT_API.md`](INTENT_API.md) — the `OnrampIntent` schema, memo rules,
+  and the planned endpoint.
+- [`docs/MCP.md`](MCP.md) — the agent surface and the missing execute tool.
+- [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) — where the on-ramp sits in the
+  intent router and hop chain.
+- [`docs/SEP_COMPLIANCE.md`](SEP_COMPLIANCE.md) — per-anchor SEP-6/SEP-24
+  support and how it is surveyed.
+- [`docs/FAQ.md`](FAQ.md) — "is this custodial?" and what happens when an
+  anchor fails.
+
 <!-- source: docs/SDK.md -->
 
 # SDK
@@ -2704,6 +3038,11 @@ The entry points expose the full tool set:
 | `intel.probe.coverage`    | ✓                   | ✓              | ✓                             |
 | `intel.leaderboard`       | ✓                   | ✓              | ✓                             |
 | `intel.corridors`         | ✓                   | ✓              | ✓                             |
+| `intel.onramp.quote`      | ✓                   | ✓              | ✓                             |
+| `intel.onramp.prepare`    | ✓                   | ✓              | ✓                             |
+
+The on-ramp tools are registered by the shared `lib/mcp` server, so every
+entry point has them. See [On-ramp tools](#on-ramp-tools) below.
 
 **Scope:** Stellar Intel abstracts anchors, not chains. These tools answer
 "what's my best fiat exit price, and which Stellar anchor should I trust to
@@ -2744,8 +3083,9 @@ which builds its server from the canonical `createServer()` in
 and the `@stellarintel/mcp` package, so they cannot drift apart. Requests are
 rate-limited to 60 per minute per IP.
 
-**It serves the full eight-tool suite** alongside prompts and the anchor health
-ledger resource across all transports.
+**It serves ten tools** — the eight off-ramp and discovery tools plus the two
+on-ramp tools — alongside prompts and the anchor health ledger resource across
+all transports.
 
 ## Running it yourself
 
@@ -3006,6 +3346,40 @@ Flag-gated corridors hidden in the UI are omitted.
 
 - **Input:** none
 - **Output:** `{ count: number, corridors: CorridorSummary[] }`
+
+### On-ramp tools
+
+Both on-ramp tools are annotated `readOnlyHint: true` and use the same
+field names as an on-ramp intent ([`docs/INTENT_API.md`](INTENT_API.md)).
+They are implemented in [`lib/mcp/onramp.ts`](../lib/mcp/onramp.ts).
+
+- **`intel.onramp.quote`** — the best indicative deposit estimate across the
+  anchors that serve the corridor.
+  **Input:** `{ sourceAsset, destinationAsset, amount }`, where `sourceAsset`
+  is the fiat the user pays (e.g. `NGN`), `destinationAsset` the Stellar asset
+  code received (e.g. `USDC`) and `amount` the fiat amount. There is no
+  `depositMethod` argument: published SEP-24 fees do not vary by method.
+  **Output:** `{ anchor, anchorName, asset, estimatedReceived, exchangeRate,
+corridorId, fiatAmount, indicative: true, source, alternatives }`, where
+  `source` is `sep38` or `sep24-fee`. The figure is an estimate from the
+  anchor's published fees and a reference price — never a firm quote, so there
+  is no `quoteId` or `expiresAt`. See [docs/ONRAMP.md](ONRAMP.md) for what
+  "indicative" means. Errors: `NO_ROUTE` (no corridor serves the pair),
+  `INVALID_AMOUNT`, and `RATE_UNAVAILABLE` (no anchor could be priced).
+- **`intel.onramp.prepare`** — the unsigned on-ramp intent, its hash, and
+  where the user finishes the deposit. **Input:** an `OnrampIntent` without a
+  signature. **Output:** `{ unsignedEnvelope: { intent, intentHash },
+corridorId, handoffUrl, nextStep }`. `handoffUrl` is the Stellar Intel
+  `/onramp` page for the corridor and amount, not the anchor's own deposit
+  page: that page only exists after a SEP-10 login signed by the user's wallet,
+  which an agent cannot do. No anchor is contacted.
+
+**There is no on-ramp execute tool, by design: on-ramp KYC is browser-only.**
+Unlike the off-ramp `intel.execute`, an on-ramp cannot be completed by signing
+and submitting a Stellar transaction. The user must authenticate with the
+anchor (SEP-10) and complete identity verification and payment inside the
+anchor's hosted SEP-24 page. An agent can quote and prepare; the human
+finishes the deposit. Stellar Intel never sees the KYC data or the fiat leg.
 
 ## Prompts
 
@@ -3896,7 +4270,7 @@ derived from on-chain evidence that any third party can audit.
 
 # SEP Compliance Matrix
 
-**Last reviewed:** 2026-09-26
+**Last reviewed:** 2026-10-24
 
 Stellar Intel integrates with Stellar anchors that implement various Stellar Ecosystem Proposals (SEPs). SEP-6 enables programmatic deposit/withdraw — the anchor exposes a machine-readable API rather than hosting an iframe — allowing Stellar Intel to collect KYC fields natively and surface indicative rates for SEP-6-only anchors. Anchors that advertise SEP-6 but not SEP-24 receive an **Indicative** badge in the comparison UI, since their rates are derived from the SEP-6 `/info` fee schedule rather than a live quote.
 
@@ -3955,6 +4329,29 @@ Registered anchors ([`constants/anchors.ts`](../constants/anchors.ts)). Capabili
 > SEP-6 and SEP-24 call to it fails to connect. The TOML itself still returns 200, which is why a
 > capability read that stops at the TOML kept scoring it as supported. EUR has no anchor now and
 > the `usdc-eur` corridor is hidden from selectors until one serves it.
+
+### SEP-38 quote gap
+
+The SEP-38 column records whether an anchor advertises a quote server, not whether it can serve a
+firm quote for a given corridor. A corridor is only firm-quoted when the quote server's `/info`
+lists both the asset and the fiat pair; otherwise the corridor falls back to indicative pricing
+(Tier 2 or Tier 3 above). Today no registered anchor serves a firm quote for NGN, so the USDC→NGN
+flow is indicative pricing plus SEP-24 execution and is labelled as such in the UI.
+
+### Min-receive guard
+
+Before the wallet is asked to sign a SEP-24 withdrawal, Stellar Intel compares the anchor's own
+`amount_out` estimate with the minimum-receive floor: the selected rate's expected net amount less
+`MIN_RECEIVE_TOLERANCE` (2%). If the anchor now estimates less than the floor, the payment is
+blocked and the user sees both figures. If the anchor gives no estimate, the flow continues.
+
+### SEP-38 readiness
+
+An anchor is SEP-38 ready when its `stellar.toml` publishes `ANCHOR_QUOTE_SERVER` and the quote
+server's `/info` lists the asset and fiat pair of the corridor. Readiness decides whether a
+corridor can show a **firm** quote or only an **indicative** estimate (fees plus a reference
+price). The per-anchor result is the SEP-38 column in the matrix above and the one-line summary
+below; there is no separate readiness page or endpoint yet.
 
 ### SEP-38 availability, in one line
 

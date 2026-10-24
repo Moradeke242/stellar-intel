@@ -34,7 +34,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const store = getReputationStore();
 
       // Get all published outcomes that were successful
-      const allRows = await store.query();
+      const allRows = await store.query({ direction: 'withdraw' });
       const publishedCompleted = allRows.filter(
         (r) => r.publishedAt !== null && r.outcome === 'completed'
       );

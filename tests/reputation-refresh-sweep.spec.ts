@@ -22,6 +22,7 @@ const mocks = vi.hoisted(() => ({
   probeAllAnchorIssuers: vi.fn(),
   probeAllAnchorIntegrity: vi.fn(),
   probeAllAnchorSep31: vi.fn(),
+  probeSep38Prices: vi.fn(),
 }));
 
 vi.mock('@/lib/api/cron-auth', () => ({ checkCronAuth: mocks.checkCronAuth }));
@@ -40,11 +41,13 @@ vi.mock('@/lib/reputation/probe', async (importOriginal) => {
     probeAllAnchorIssuers: mocks.probeAllAnchorIssuers,
     probeAllAnchorIntegrity: mocks.probeAllAnchorIntegrity,
     probeAllAnchorSep31: mocks.probeAllAnchorSep31,
+    probeSep38Prices: mocks.probeSep38Prices,
   };
 });
 
 import { POST } from '@/app/api/reputation/refresh/route';
 import { DurableProbeStore } from '@/lib/reputation/probe';
+import { ANCHORS } from '@/constants/anchors';
 
 function makeRequest(): NextRequest {
   return new NextRequest('http://localhost/api/reputation/refresh', { method: 'POST' });
@@ -69,6 +72,7 @@ beforeEach(() => {
   mocks.probeAllAnchorIssuers.mockResolvedValue([{}, {}, {}]);
   mocks.probeAllAnchorIntegrity.mockResolvedValue([{}]);
   mocks.probeAllAnchorSep31.mockResolvedValue([{}, {}, {}, {}]);
+  mocks.probeSep38Prices.mockResolvedValue([{}, {}, {}, {}, {}]);
 });
 
 describe('POST /api/reputation/refresh probe sweep', () => {
@@ -108,9 +112,22 @@ describe('POST /api/reputation/refresh probe sweep', () => {
       issuerMismatch: 3,
       tomlIntegrity: 1,
       sep31Info: 4,
+      sep38Prices: 5,
       persisted: 0,
       failed: 0,
     });
+  });
+
+  it('runs the SEP-38 prices probe over the anchor registry, writing to the store', async () => {
+    const store = { recordQuote: vi.fn().mockResolvedValue(undefined) };
+    mocks.getReputationStore.mockReturnValue(store);
+
+    await POST(makeRequest());
+
+    expect(mocks.probeSep38Prices).toHaveBeenCalledTimes(1);
+    const [anchors, sink] = mocks.probeSep38Prices.mock.calls[0]!;
+    expect(anchors).toBe(ANCHORS);
+    expect(sink).toBe(store);
   });
 
   it('counts samples the SEP-31 sink persists', async () => {

@@ -84,7 +84,10 @@ async function loadStandings(): Promise<StandingsResult> {
         // Resolved inside the try: a postgres backend with no SqlExecutor throws
         // here, and at prerender time there is none. Same guard as loadAnchorRows
         // in app/anchors/[id]/page.tsx.
-        const rows = await getReputationStore().query({ anchorId: anchor.id });
+        const rows = await getReputationStore().query({
+          anchorId: anchor.id,
+          direction: 'withdraw',
+        });
         allRows.push(...rows);
         const scorecard = buildScorecards(mapOutcomeRows(rows))[30];
 

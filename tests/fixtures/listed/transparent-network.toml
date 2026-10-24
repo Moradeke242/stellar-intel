@@ -1,0 +1,10 @@
+# Source: https://dcm.systems/.well-known/stellar.toml (fetched 2026-10-19)
+[DOCUMENTATION]
+ORG_NAME = "Transparent Network"
+ORG_URL = "https://prozora.network"
+
+[[CURRENCIES]]
+code = "UAH"
+issuer = "GCJI3CP2NL6NWSCHM36XBQYCBHOTVVZWEXZALWON34KAYUGF6GEVNRTS"
+anchor_asset_type = "fiat"
+anchor_asset = "UAH"

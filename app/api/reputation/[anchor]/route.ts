@@ -92,7 +92,7 @@ export async function GET(
     // path already uses it, and the throwing variant took this route down at
     // prerender time and in local dev without DATABASE_URL.
     const store = tryGetReputationStore();
-    const storedRows = store ? await store.query({ anchorId: anchor }) : [];
+    const storedRows = store ? await store.query({ anchorId: anchor, direction: 'withdraw' }) : [];
     const seededRows = outcomeStore.filter((r) => r.anchorId === anchor);
     const anchorRows = [...seededRows, ...storedRows.map(toOutcomeRow)];
 

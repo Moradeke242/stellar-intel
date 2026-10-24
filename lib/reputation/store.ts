@@ -1,9 +1,12 @@
 import type {
   LatencyPercentiles,
+  OutcomeDirection,
   OutcomeLogRow,
   ProbeKind,
   ProbeLedgerRow,
+  QuoteHistoryRow,
 } from '@/types/reputation';
+import { QuoteHistoryRowSchema } from './schema';
 import { SqliteReputationStore } from './sqlite';
 import { PostgresReputationStore, type SqlExecutor } from './postgres';
 import { getSqlExecutor, ReputationStoreUnavailableError } from './pool';
@@ -21,6 +24,12 @@ export const PROBE_RETENTION_DAYS = 90;
 export interface OutcomeQuery {
   anchorId?: string;
   corridor?: string;
+  /**
+   * Restrict to one transfer direction (ONR031). Off-ramp scorecards, the
+   * leaderboard and oracle rates must pass `'withdraw'`, or deposit rows on
+   * the same corridor id would be counted as withdrawals.
+   */
+  direction?: OutcomeDirection;
   /** Only rows that are settled but not yet reconciled (delivery still null). */
   pendingReconciliationOnly?: boolean;
   /**
@@ -48,6 +57,13 @@ export interface ProbeSampleQuery {
   kind?: ProbeKind;
 }
 
+export interface QuoteQuery {
+  anchorId?: string;
+  corridor?: string;
+  /** Inclusive lower bound on `observedAt`. */
+  since?: Date;
+}
+
 export interface ReputationStore {
   /**
    * Insert-only on intentHash. Returns true when the row was written, false when
@@ -66,7 +82,20 @@ export interface ReputationStore {
   queryProbeSamples(domain?: string, filter?: ProbeSampleQuery): Promise<ProbeLedgerRow[]>;
   /** Delete probe samples older than cutoff. Returns the number of rows removed. */
   compactProbes(cutoff: Date): Promise<number>;
+  /** Record one SEP-38 indicative price (Q38012). Throws on a malformed row. */
+  recordQuote(row: QuoteHistoryRow): Promise<void>;
+  /** Query recorded SEP-38 prices, oldest first. */
+  queryQuotes(filter?: QuoteQuery): Promise<QuoteHistoryRow[]>;
+  /** Delete quotes observed before cutoff. Returns the number of rows removed. */
+  compactQuotes(cutoff: Date): Promise<number>;
   close(): Promise<void>;
+}
+
+export function matchesQuoteFilter(row: QuoteHistoryRow, filter: QuoteQuery): boolean {
+  if (filter.anchorId && row.anchorId !== filter.anchorId) return false;
+  if (filter.corridor && row.corridor !== filter.corridor) return false;
+  if (filter.since && row.observedAt < filter.since.toISOString()) return false;
+  return true;
 }
 
 function matchesProbeFilter(row: ProbeLedgerRow, filter: ProbeSampleQuery): boolean {
@@ -112,6 +141,7 @@ function matches(row: OutcomeLogRow, filter: OutcomeQuery): boolean {
   if (!filter.includeUnattested && !row.attested) return false;
   if (filter.anchorId && row.anchorId !== filter.anchorId) return false;
   if (filter.corridor && row.corridor !== filter.corridor) return false;
+  if (filter.direction && row.direction !== filter.direction) return false;
   if (filter.pendingReconciliationOnly) {
     if (row.deliveredAmount !== null || row.reconciledAt !== null) return false;
     if (!row.stellarTransactionId) return false;
@@ -123,6 +153,7 @@ function matches(row: OutcomeLogRow, filter: OutcomeQuery): boolean {
 export class InMemoryReputationStore implements ReputationStore {
   private readonly rows = new Map<string, OutcomeLogRow>();
   private readonly probeSamples: ProbeLedgerRow[] = [];
+  private quotes: QuoteHistoryRow[] = [];
 
   async append(row: OutcomeLogRow): Promise<boolean> {
     if (this.rows.has(row.intentHash)) return false;
@@ -174,9 +205,28 @@ export class InMemoryReputationStore implements ReputationStore {
     return before - this.probeSamples.length;
   }
 
+  async recordQuote(row: QuoteHistoryRow): Promise<void> {
+    this.quotes.push({ ...QuoteHistoryRowSchema.parse(row) });
+  }
+
+  async queryQuotes(filter: QuoteQuery = {}): Promise<QuoteHistoryRow[]> {
+    return this.quotes
+      .filter((r) => matchesQuoteFilter(r, filter))
+      .map((r) => ({ ...r }))
+      .sort((a, b) => a.observedAt.localeCompare(b.observedAt));
+  }
+
+  async compactQuotes(cutoff: Date): Promise<number> {
+    const cutoffIso = cutoff.toISOString();
+    const before = this.quotes.length;
+    this.quotes = this.quotes.filter((r) => r.observedAt >= cutoffIso);
+    return before - this.quotes.length;
+  }
+
   async close(): Promise<void> {
     this.rows.clear();
     this.probeSamples.length = 0;
+    this.quotes = [];
   }
 }
 

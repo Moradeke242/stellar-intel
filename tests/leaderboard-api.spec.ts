@@ -62,6 +62,7 @@ function outcomeRow(
   return {
     anchorId: 'moneygram',
     corridor: 'ngnt-ngn',
+    direction: 'withdraw',
     quotedRate: '1500',
     deliveredRate: '1500',
     quotedAmount: '100',

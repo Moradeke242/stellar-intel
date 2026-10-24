@@ -79,7 +79,7 @@ export const LLMS_FULL_SECTIONS: LlmsFullSection[] = [
   {
     title: 'Integration guides',
     blurb: 'Worked examples, client libraries, the MCP server, and webhook delivery.',
-    files: ['COOKBOOK.md', 'SDK.md', 'MCP.md', 'WEBHOOKS.md'],
+    files: ['COOKBOOK.md', 'ONRAMP.md', 'SDK.md', 'MCP.md', 'WEBHOOKS.md'],
   },
   {
     title: 'Data and methodology',

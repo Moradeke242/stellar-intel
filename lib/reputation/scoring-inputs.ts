@@ -69,7 +69,7 @@ export async function collectScoringInputs(anchorIds: string[]): Promise<Scoring
       }
 
       // Reputation composite comes from settled outcomes, keyed by anchor id.
-      const rows = await store.query({ anchorId });
+      const rows = await store.query({ anchorId, direction: 'withdraw' });
       const scorecard = buildScorecards(mapOutcomeRows(rows))[30];
       if (scorecard.state === 'ok') {
         metrics.reputationComposite = composite({

@@ -1,0 +1,58 @@
+# Source: https://etherfuse.com/.well-known/stellar.toml (fetched 2026-09-23)
+[DOCUMENTATION]
+ORG_NAME = "Etherfuse"
+ORG_URL = "https://etherfuse.com"
+
+[[CURRENCIES]]
+code = "USTRY"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "US Treasury Notes"
+
+[[CURRENCIES]]
+code = "CETES"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "Mexican CETES Bonds"
+
+[[CURRENCIES]]
+code = "TESOURO"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "Brazilian Tesouro Bonds"
+
+[[CURRENCIES]]
+code = "MEX"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "fiat"
+anchor_asset = "MXN"
+
+[[CURRENCIES]]
+code = "CETESZ"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "fiat"
+anchor_asset = "MXN"
+
+[[CURRENCIES]]
+code = "EUROB"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "European Government Bonds"
+
+[[CURRENCIES]]
+code = "KTB"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "Korean Treasury Bonds"
+
+[[CURRENCIES]]
+code = "GILTS"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "bond"
+anchor_asset = "UK Gilts"
+
+[[CURRENCIES]]
+code = "MEXe"
+issuer = "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC"
+anchor_asset_type = "crypto"
+anchor_asset = "Etherfuse CETES"

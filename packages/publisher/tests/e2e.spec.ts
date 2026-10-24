@@ -95,6 +95,7 @@ async function seedPostgresOutcome(
     intentHash,
     anchorId,
     corridor: 'USD-NGN',
+    direction: 'withdraw',
     quotedRate: '1500.0',
     deliveredRate: null,
     quotedAmount: '100.0',

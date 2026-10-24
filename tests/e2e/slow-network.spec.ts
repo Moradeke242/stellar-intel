@@ -88,11 +88,9 @@ test.describe('[#105] slow-3G network profile', () => {
   test('no unhandled JS errors occur on slow 3G', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
-
     await page.goto('/offramp', { waitUntil: 'domcontentloaded' });
 
-    // Allow a few seconds for async operations to settle
-    await page.waitForTimeout(4_000);
+    await expect(page.getByLabel('Amount (USDC)')).toBeVisible({ timeout: 30_000 });
 
     expect(errors, `Unexpected JS errors on slow 3G: ${errors.join('; ')}`).toHaveLength(0);
   });

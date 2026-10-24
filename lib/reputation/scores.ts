@@ -46,7 +46,9 @@ export async function fetchReputationScores(): Promise<Map<string, AnchorReputat
     await Promise.all(
       ANCHORS.map(async (anchor) => {
         try {
-          const rows = store ? await store.query({ anchorId: anchor.id }) : [];
+          const rows = store
+            ? await store.query({ anchorId: anchor.id, direction: 'withdraw' })
+            : [];
           const scorecard = buildScorecards(mapOutcomeRows(rows))[30];
 
           if (scorecard.state !== 'ok') {

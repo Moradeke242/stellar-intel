@@ -147,20 +147,83 @@ curl -sX POST https://stellar-intel.vercel.app/api/intent/offramp \
   }'
 ```
 
+## On-ramp — `POST /api/v1/intent/onramp`
+
+> **Status.** The `OnrampIntent` schema below is shipped
+> (`OnrampIntentSchema` in [`types/intent.ts`](../types/intent.ts), re-exported
+> from [`lib/intent/onramp-schema.ts`](../lib/intent/onramp-schema.ts)). The
+> endpoint itself is **not live yet**; the request body is final, the response
+> fields are the planned contract. The full deposit flow — preflight/trustline,
+> SEP-10, interactive deposit, payment, tracking — is in
+> [`docs/ONRAMP.md`](ONRAMP.md).
+
+The on-ramp intent is the mirror image of the off-ramp intent: the user pays in
+fiat and the anchor credits a Stellar asset. It is a distinct schema with
+`type: "onramp"` (not a `CanonicalIntentV1` `kind`), and it carries the
+Stellar `destination` that the anchor credits, which the off-ramp's free-form
+`recipient` does not.
+
+### Payload — `OnrampIntent`
+
+| Field              | Type   | Required | Rule                                                                   |
+| ------------------ | ------ | -------- | ---------------------------------------------------------------------- |
+| `type`             | string | yes      | Literal `"onramp"` — the off-ramp discriminator is rejected.           |
+| `sourceAsset`      | string | yes      | Non-empty; the fiat paid in (e.g. `NGN`).                              |
+| `destinationAsset` | string | yes      | Non-empty; the Stellar asset bought (e.g. `USDC`).                     |
+| `amount`           | string | yes      | Positive decimal string (`/^\d+(\.\d+)?$/`, `parseFloat > 0`).         |
+| `sender`           | string | yes      | Non-empty; the fiat rail's reference (bank account, wallet, agent id). |
+| `destination`      | string | yes      | Stellar public key (`G…`, 56 chars); rejects muxed `M…` accounts.      |
+| `depositMethod`    | enum   | yes      | `bank_transfer`, `cash`, `mobile_money` or `card`.                     |
+| `memo`             | string | no       | Non-empty when present; attributing memo for pooled-account anchors.   |
+| `memoType`         | enum   | no       | `text`, `id` or `hash`; required together with `memo`.                 |
+
+Memo rules (enforced by `superRefine`): `memo` and `memoType` must be supplied
+together; a `text` memo must be at most 28 bytes once UTF-8 encoded; an `id`
+memo must be an unsigned 64-bit integer; a `hash` memo must be 64 lowercase
+hex characters. A `type` of `"offramp"` is rejected, as is a non-`G…`
+`destination`.
+
+```jsonc
+// request
+{
+  "type": "onramp",
+  "sourceAsset": "NGN",
+  "destinationAsset": "USDC",
+  "amount": "150000.00",
+  "sender": "NG123456789012345678",
+  "destination": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "depositMethod": "bank_transfer",
+}
+// response (planned)
+{
+  "intentId": "onramp_intent_9a4f21",
+  "status": "pending_trustline",
+  "unsignedChangeTrustXdr": "AAAAAgAAAABn...",
+  "handoffUrl": "https://cowrie.exchange/sep24/deposit?transaction_id=...",
+  "createdAt": "2026-10-17T12:05:00Z",
+}
+```
+
+The planned response returns a `handoffUrl` (the anchor's hosted SEP-24
+deposit page) and, when the destination lacks a trustline for the asset, an
+`unsignedChangeTrustXdr` for the user to sign. `unsignedChangeTrustXdr` is
+`null` when no trustline change is needed. Neither field is produced today.
+
 ## `IntentV1` — canonical router primitive
 
 `types/intent.ts` also exports `IntentV1Schema` / `IntentV1` (re-exported from
 `lib/intent/schema.ts`), the richer canonical intent the router consumes. The
 off-ramp envelope above is the v1 path wired into the UI today; `IntentV1` is the
-shape the multi-anchor router (see [`docs/ROADMAP.md`](ROADMAP.md), Wave 1.2 /
-v2.2) scores and splits across anchors.
+shape the multi-anchor router (see [Wave 1.2 — Router + Seeds](ROADMAP.md#wave-12--router--seeds))
+scores and splits across anchors.
 
-## Canonical Intent V1 — versioned superset
+## Canonical Intent V1 — type definitions (not accepted by `/api/intent/offramp`)
 
-`CanonicalIntentV1Schema` in `types/intent.ts` is the **versioned superset** that
-covers all intent kinds in one discriminated union. It is what `POST /api/intent/offramp`
-parses after #817. Off-ramp-only clients that omit `kind` are accepted unchanged; the
-endpoint injects `kind: "offramp"` automatically.
+`CanonicalIntentV1Schema` and its related schemas are defined in `types/intent.ts`
+and re-exported from `lib/intent/schema.ts` for router and SDK use. They are not
+accepted by `POST /api/intent/offramp`, which accepts only the flat `IntentSchema`
+shape documented above. Sending `kind` without `type: "offramp"` to this endpoint
+returns 400 `VALIDATION_ERROR`.
 
 ### Common fields (all kinds)
 
@@ -176,8 +239,7 @@ endpoint injects `kind: "offramp"` automatically.
 
 ### `kind: "offramp"` (single off-ramp)
 
-Backwards-compatible with legacy clients that send `type: "offramp"` or omit `kind`.
-No additional fields beyond the common base.
+Represents a single off-ramp using the common fields, with `kind` set to `"offramp"`.
 
 ```jsonc
 {
@@ -239,8 +301,7 @@ Each `IntentHop`:
 
 ### `kind: "recurring"` (scheduled)
 
-Repeats a payment on a cron schedule. The endpoint will reject this kind with
-`501 NOT_IMPLEMENTED` until the scheduler service is wired up.
+Represents a payment that repeats on a cron schedule.
 
 Additional field:
 
@@ -275,5 +336,6 @@ Additional field:
 ## Related
 
 - [`docs/CANONICAL_JSON.md`](CANONICAL_JSON.md) — the exact canonicalization rules.
+- [`docs/ONRAMP.md`](ONRAMP.md) — the on-ramp flow and its planned endpoints.
 - [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) — where the intent sits in the flow.
 - [`docs/ANCHOR_REPUTATION.md`](ANCHOR_REPUTATION.md) — how outcomes feed scoring.

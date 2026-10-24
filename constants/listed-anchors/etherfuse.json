@@ -1,0 +1,64 @@
+{
+  "id": "etherfuse",
+  "name": "Etherfuse (Stablebonds)",
+  "kind": "issuer",
+  "domains": ["etherfuse.com", "www.etherfuse.com", "stablebonds.etherfuse.com"],
+  "orgUrl": "https://etherfuse.com",
+  "verifiedAt": "2026-09-23",
+  "assets": [
+    {
+      "code": "USTRY",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "US Treasury Notes"
+    },
+    {
+      "code": "CETES",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "Mexican CETES Bonds"
+    },
+    {
+      "code": "TESOURO",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "Brazilian Tesouro Bonds"
+    },
+    {
+      "code": "MEX",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "fiat",
+      "anchorAsset": "MXN"
+    },
+    {
+      "code": "CETESZ",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "fiat",
+      "anchorAsset": "MXN"
+    },
+    {
+      "code": "EUROB",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "European Government Bonds"
+    },
+    {
+      "code": "KTB",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "Korean Treasury Bonds"
+    },
+    {
+      "code": "GILTS",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "bond",
+      "anchorAsset": "UK Gilts"
+    },
+    {
+      "code": "MEXe",
+      "issuer": "GCRYUGD5NVARGXT56XEZI5CIFCQETYHAPQQTHO2O3IQZTHDH4LATMYWC",
+      "anchorAssetType": "crypto",
+      "anchorAsset": "Etherfuse CETES"
+    }
+  ]
+}

@@ -15,7 +15,13 @@ import aquarius from './aquarius.json';
 import audd from './audd.json';
 import bitbond from './bitbond.json';
 import blackRidgeTrust from './black-ridge-trust.json';
+import circleUsdc from './circle-usdc.json';
+import cru from './cru.json';
+import digitra from './digitra.json';
+import etherfuse from './etherfuse.json';
+import fchain from './fchain.json';
 import fxdao from './fxdao.json';
+import gloDollar from './glo-dollar.json';
 import gmoTrust from './gmo-trust.json';
 import gratz from './gratz.json';
 import ixinium from './ixinium.json';
@@ -28,11 +34,16 @@ import moneygramMgusd from './moneygram-mgusd.json';
 import nafuloo from './nafuloo.json';
 import naobtc from './naobtc.json';
 import phoenix from './phoenix.json';
+import rawJuiceGuru from './raw-juice-guru.json';
 import reyts from './reyts.json';
+import sl8 from './sl8.json';
 import stronghold from './stronghold.json';
+import transparentNetwork from './transparent-network.json';
 import ultraCapital from './ultra-capital.json';
 import valtorum from './valtorum.json';
 import vnx from './vnx.json';
+import wisdomtree from './wisdomtree.json';
+import ximcoin from './ximcoin.json';
 
 const RAW: unknown[] = [
   afreum,
@@ -41,7 +52,13 @@ const RAW: unknown[] = [
   audd,
   bitbond,
   blackRidgeTrust,
+  circleUsdc,
+  cru,
+  digitra,
+  etherfuse,
+  fchain,
   fxdao,
+  gloDollar,
   gmoTrust,
   gratz,
   ixinium,
@@ -54,11 +71,16 @@ const RAW: unknown[] = [
   nafuloo,
   naobtc,
   phoenix,
+  rawJuiceGuru,
   reyts,
+  sl8,
   stronghold,
+  transparentNetwork,
   ultraCapital,
   valtorum,
   vnx,
+  wisdomtree,
+  ximcoin,
 ];
 
 export const LISTED_ANCHORS: readonly ListedAnchor[] = parseListedAnchors(RAW);

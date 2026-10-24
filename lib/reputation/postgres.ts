@@ -1,9 +1,17 @@
-import type { OutcomeLogRow, OutcomeStatus, ProbeLedgerRow } from '@/types/reputation';
+import type {
+  OutcomeLogRow,
+  OutcomeStatus,
+  ProbeLedgerRow,
+  QuoteHistoryRow,
+  QuoteSource,
+} from '@/types/reputation';
+import { QuoteHistoryRowSchema } from './schema';
 import type {
   DeliveredUpdate,
   DisputedUpdate,
   OutcomeQuery,
   ProbeSampleQuery,
+  QuoteQuery,
   ReputationStore,
 } from './store';
 
@@ -25,6 +33,7 @@ const CREATE_TABLE_SQL = `
     intent_hash            TEXT PRIMARY KEY,
     anchor_id              TEXT NOT NULL,
     corridor               TEXT NOT NULL,
+    direction              TEXT NOT NULL DEFAULT 'withdraw',
     quoted_rate            TEXT NOT NULL,
     delivered_rate         TEXT,
     quoted_amount          TEXT NOT NULL,
@@ -54,6 +63,20 @@ const CREATE_TABLE_SQL = `
   );
   CREATE INDEX IF NOT EXISTS idx_probe_samples_domain ON probe_samples (domain);
   CREATE INDEX IF NOT EXISTS idx_probe_samples_domain_corridor ON probe_samples (domain, corridor);
+
+  CREATE TABLE IF NOT EXISTS quote_history (
+    anchor_id    TEXT NOT NULL,
+    corridor     TEXT NOT NULL,
+    sell_asset   TEXT NOT NULL,
+    buy_asset    TEXT NOT NULL,
+    sell_amount  TEXT NOT NULL,
+    price        TEXT NOT NULL,
+    total_price  TEXT NOT NULL,
+    source       TEXT NOT NULL,
+    observed_at  TIMESTAMPTZ NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_quote_history_anchor_corridor_observed
+    ON quote_history (anchor_id, corridor, observed_at);
 `;
 
 // Tables created before migration 006 lack the attestation columns, and
@@ -66,6 +89,13 @@ export const MIGRATE_ATTESTATION_SQL = `
     ADD COLUMN IF NOT EXISTS signer_account TEXT;
 `;
 
+// Tables created before ONR031 lack the direction column; every pre-existing
+// row is an off-ramp outcome, which the DEFAULT backfills.
+export const MIGRATE_DIRECTION_SQL = `
+  ALTER TABLE outcome_log
+    ADD COLUMN IF NOT EXISTS direction TEXT NOT NULL DEFAULT 'withdraw';
+`;
+
 function asString(v: unknown): string | null {
   return v == null ? null : String(v);
 }
@@ -75,6 +105,7 @@ function fromDb(r: Record<string, unknown>): OutcomeLogRow {
     intentHash: String(r['intent_hash']),
     anchorId: String(r['anchor_id']),
     corridor: String(r['corridor']),
+    direction: r['direction'] === 'deposit' ? 'deposit' : 'withdraw',
     quotedRate: String(r['quoted_rate']),
     deliveredRate: asString(r['delivered_rate']),
     quotedAmount: String(r['quoted_amount']),
@@ -108,6 +139,20 @@ function fromProbeDb(r: Record<string, unknown>): ProbeLedgerRow {
   };
 }
 
+function fromQuoteDb(r: Record<string, unknown>): QuoteHistoryRow {
+  return {
+    anchorId: String(r['anchor_id']),
+    corridor: String(r['corridor']),
+    sellAsset: String(r['sell_asset']),
+    buyAsset: String(r['buy_asset']),
+    sellAmount: String(r['sell_amount']),
+    price: String(r['price']),
+    totalPrice: String(r['total_price']),
+    source: String(r['source']) as QuoteSource,
+    observedAt: new Date(r['observed_at'] as string).toISOString(),
+  };
+}
+
 export class PostgresReputationStore implements ReputationStore {
   private ready: Promise<void> | null = null;
 
@@ -118,6 +163,7 @@ export class PostgresReputationStore implements ReputationStore {
       this.ready = this.sql
         .query(CREATE_TABLE_SQL)
         .then(() => this.sql.query(MIGRATE_ATTESTATION_SQL))
+        .then(() => this.sql.query(MIGRATE_DIRECTION_SQL))
         .then(() => undefined)
         .catch((err: unknown) => {
           // Reset so a transient failure does not permanently poison the store.
@@ -135,16 +181,17 @@ export class PostgresReputationStore implements ReputationStore {
     // published_at/reconciled_at and push the row back through the publisher.
     const { rows } = await this.sql.query(
       `INSERT INTO outcome_log
-         (intent_hash, anchor_id, corridor, quoted_rate, delivered_rate, quoted_amount,
+         (intent_hash, anchor_id, corridor, direction, quoted_rate, delivered_rate, quoted_amount,
           delivered_amount, settle_seconds, outcome, created_at, stellar_transaction_id, reconciled_at,
           disputed, disputed_reason, published_at, oracle_tx_hash, attested, signer_account)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
        ON CONFLICT (intent_hash) DO NOTHING
        RETURNING intent_hash`,
       [
         row.intentHash,
         row.anchorId,
         row.corridor,
+        row.direction,
         row.quotedRate,
         row.deliveredRate,
         row.quotedAmount,
@@ -176,6 +223,10 @@ export class PostgresReputationStore implements ReputationStore {
     if (filter.corridor) {
       params.push(filter.corridor);
       where.push(`corridor = $${params.length}`);
+    }
+    if (filter.direction) {
+      params.push(filter.direction);
+      where.push(`direction = $${params.length}`);
     }
     if (filter.pendingReconciliationOnly) {
       where.push(
@@ -258,6 +309,59 @@ export class PostgresReputationStore implements ReputationStore {
     await this.init();
     const { rows } = await this.sql.query(
       `DELETE FROM probe_samples WHERE probed_at < $1 RETURNING domain`,
+      [cutoff.toISOString()]
+    );
+    return rows.length;
+  }
+
+  async recordQuote(row: QuoteHistoryRow): Promise<void> {
+    const q = QuoteHistoryRowSchema.parse(row);
+    await this.init();
+    await this.sql.query(
+      `INSERT INTO quote_history
+         (anchor_id, corridor, sell_asset, buy_asset, sell_amount, price, total_price, source, observed_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        q.anchorId,
+        q.corridor,
+        q.sellAsset,
+        q.buyAsset,
+        q.sellAmount,
+        q.price,
+        q.totalPrice,
+        q.source,
+        q.observedAt,
+      ]
+    );
+  }
+
+  async queryQuotes(filter: QuoteQuery = {}): Promise<QuoteHistoryRow[]> {
+    await this.init();
+    const where: string[] = [];
+    const params: unknown[] = [];
+    if (filter.anchorId) {
+      params.push(filter.anchorId);
+      where.push(`anchor_id = $${params.length}`);
+    }
+    if (filter.corridor) {
+      params.push(filter.corridor);
+      where.push(`corridor = $${params.length}`);
+    }
+    if (filter.since) {
+      params.push(filter.since.toISOString());
+      where.push(`observed_at >= $${params.length}`);
+    }
+    const sql = `SELECT * FROM quote_history ${
+      where.length ? `WHERE ${where.join(' AND ')}` : ''
+    } ORDER BY observed_at ASC`;
+    const { rows } = await this.sql.query(sql, params);
+    return rows.map(fromQuoteDb);
+  }
+
+  async compactQuotes(cutoff: Date): Promise<number> {
+    await this.init();
+    const { rows } = await this.sql.query(
+      `DELETE FROM quote_history WHERE observed_at < $1 RETURNING anchor_id`,
       [cutoff.toISOString()]
     );
     return rows.length;

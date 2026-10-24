@@ -83,7 +83,7 @@ export async function loadCorpusCoverage(anchorIds: string[]): Promise<Reputatio
   await Promise.all(
     anchorIds.map(async (anchorId) => {
       try {
-        const rows = await store.query({ anchorId });
+        const rows = await store.query({ anchorId, direction: 'withdraw' });
         allRows.push(...rows);
       } catch {
         // Store unavailable for this anchor — skip, don't throw.

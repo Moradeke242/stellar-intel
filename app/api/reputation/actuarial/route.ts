@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // the leaderboard route's `tryGetReputationStore` handling.
     const store = tryGetReputationStore();
     const [outcomes, probes] = store
-      ? await Promise.all([store.query(), store.queryProbeSamples()])
+      ? await Promise.all([store.query({ direction: 'withdraw' }), store.queryProbeSamples()])
       : [[], []];
 
     const observations: ActuarialObservation[] = [

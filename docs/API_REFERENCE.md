@@ -33,11 +33,13 @@ the hardening contract (see `lib/api/v1.ts`):
   - [`GET /api/v1/anchor-health/ledger`](#get-apiv1anchor-healthledger)
   - [`GET /api/v1/anchors/census`](#get-apiv1anchorscensus)
   - [`GET /api/v1/anchors/{id}/health`](#get-apiv1anchorsidhealth)
+  - [`GET /api/v1/anchors/{id}/price-history`](#get-apiv1anchorsidprice-history)
 - **Intent**
   - [`POST /api/intent`](#post-apiintent)
   - [`POST /api/intent/offramp`](#post-apiintentofframp)
   - [`POST /api/v1/intent/offramp`](#post-apiv1intentofframp)
 - **Rates**
+  - [`GET /api/deposit-rates/{corridor}`](#get-apideposit-ratescorridor)
   - [`GET /api/rates/{corridor}`](#get-apiratescorridor)
   - [`GET /api/snapshot`](#get-apisnapshot)
   - [`GET /api/v1/corridors/{corridor}/volume-savings`](#get-apiv1corridorscorridorvolume-savings)
@@ -187,6 +189,32 @@ Returns the anchor's current health status, last-probe timestamp, and score brea
 
 ---
 
+### `GET /api/v1/anchors/{id}/price-history`
+
+**Summary:** Get anchor SEP-38 price history  
+
+Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).
+
+#### Parameters
+
+| Name | In | Type | Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | `path` | `string` | **Yes** | Anchor identifier |
+| `corridor` | `query` | `string` | No | Corridor id served by the anchor (default: first corridor) |
+| `days` | `query` | `integer` | No | Lookback window in days, 1–90 (default 7) |
+
+#### Responses
+
+| Status | Description | Content-Type | Schema |
+| :--- | :--- | :--- | :--- |
+| `200` | Price history series | `application/json` | `object` |
+| `400` | Invalid params or corridor not served | `application/json` | `ApiError` |
+| `404` | Unknown anchor | `application/json` | `ApiError` |
+| `429` | Rate limit exceeded | `application/json` | `ApiError` |
+| `503` | Quote store unavailable | `application/json` | `ApiError` |
+
+---
+
 ## Intent
 
 ### `POST /api/intent`
@@ -260,6 +288,31 @@ The public v1 intent endpoint. Honours `Idempotency-Key`: a retried request repl
 ---
 
 ## Rates
+
+### `GET /api/deposit-rates/{corridor}`
+
+**Summary:** Get indicative deposit (on-ramp) estimates for a corridor  
+
+Returns per-anchor SEP-24 deposit estimates for the given corridor: fiat in, asset credited net of published fees, with per-anchor failures isolated into `errors`. Every figure is indicative; the anchor sets the firm conversion inside its interactive deposit flow.
+
+#### Parameters
+
+| Name | In | Type | Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `corridor` | `path` | `string` | **Yes** | Corridor ID (e.g. usdc-ngn, usdc-kes) |
+| `amount` | `query` | `string` | No | Fiat amount to deposit (positive decimal); defaults to 100 |
+| `asset` | `query` | `string` | No | SEP-38 asset identifier to credit; defaults to the corridor's asset |
+
+#### Responses
+
+| Status | Description | Content-Type | Schema |
+| :--- | :--- | :--- | :--- |
+| `200` | Deposit estimates for the corridor | `application/json` | `DepositRateComparison` |
+| `400` | Unknown corridor or invalid amount | `application/json` | `ApiError` |
+| `429` | Rate limited | `application/json` | `ApiError` |
+| `502` | The deposit estimate could not be computed | `application/json` | `ApiError` |
+
+---
 
 ### `GET /api/rates/{corridor}`
 

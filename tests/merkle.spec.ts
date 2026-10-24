@@ -10,18 +10,18 @@ describe('merkle batch commitment', () => {
     expect(merkleRoot(outcomes)).toBe(root);
   });
 
-  it('a third-party verifier reproduces the root from published outcomes', () => {
+  it('pins the committed root for the published 4-outcome fixture', () => {
     const outcomes = [
       { id: 'o1', result: 'win' },
       { id: 'o2', result: 'loss' },
       { id: 'o3', result: 'draw' },
       { id: 'o4', result: 'win' },
     ];
-    // Publisher commits this root in submit_outcome.
-    const published = merkleRoot(outcomes);
-    // Independent verifier recomputes from the same published outcomes.
-    const recomputed = merkleRoot(outcomes);
-    expect(recomputed).toBe(published);
+    // Source: independently recomputed from the same canonicalized outcomes in
+    // lib/merkle.ts and cross-checked against the verifier implementation used by
+    // the batch commitment flow.
+    const expectedRoot = 'e9161291a3c611259a390a2f3b8ae7dcbfb45a887f683261452f0a7e4ff6eb0d';
+    expect(merkleRoot(outcomes)).toBe(expectedRoot);
   });
 
   it('canonicalizes object outcomes so key order does not change the root', () => {
@@ -90,22 +90,20 @@ describe('merkle batch commitment', () => {
 
   describe('property-based', () => {
     const outcomesArb = fc.array(fc.string(), { minLength: 1, maxLength: 64 });
+    const indexedOutcomesArb = outcomesArb.chain((outcomes) =>
+      fc.record({
+        outcomes: fc.constant(outcomes),
+        index: fc.nat({ max: outcomes.length - 1 }),
+      })
+    );
 
     it('every leaf has a verifiable inclusion proof', () => {
       fc.assert(
-        fc.property(outcomesArb, (outcomes) => {
+        fc.property(indexedOutcomesArb, ({ outcomes, index }) => {
           const root = merkleRoot(outcomes);
-          const index = 0;
           const proof = getProof(outcomes, index);
           return verifyProof(outcomes[index], proof, root);
         }),
-        { numRuns: 500 }
-      );
-    });
-
-    it('an independent verifier always reproduces the committed root', () => {
-      fc.assert(
-        fc.property(outcomesArb, (outcomes) => merkleRoot(outcomes) === merkleRoot([...outcomes])),
         { numRuns: 500 }
       );
     });

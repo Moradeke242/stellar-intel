@@ -25,7 +25,7 @@ Ticket ranges point back to numbered issues in the
 > TS read SDK (#201), Python consumer (#203/#821); v2.0 leaderboard/history/composite/dispute
 > (#157–#159, #166). Marked in-flight (`[-]`): `@stellarintel/sdk` + `/mcp` (built, unpublished —
 > npm 404), multisig admin (two-step rotation shipped, 2-of-3 pending), decentralization (#875).
-> GraphQL is on `main` but the live endpoint currently 500s.
+> GraphQL is on `main` and served in production (graphql-yoga removed in #1248).
 >
 > **Reconciliation, 2026-08-28.** Waves reconciled against the milestone list
 > (#1076). Three v1 milestones that had shipped without ever appearing here are
@@ -773,8 +773,7 @@ decomposed into the child issues below.
       reputation, and intent status in one round trip, alongside the REST
       API rather than replacing it
       ([#870](https://github.com/ezedike-evan/stellar-intel/issues/870)).
-      `app/api/graphql/route.ts` + `lib/graphql/*`. **Prod caveat: the live
-      endpoint currently 500s (durable store unconfigured).**
+      `app/api/graphql/route.ts` + `lib/graphql/*`
 - [x] **Developer portal + interactive docs** — browsable API reference
       generated from `public/openapi.json`, an interactive console against
       a sandboxed environment, and SDK quickstarts in one place

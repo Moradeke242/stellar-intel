@@ -408,6 +408,139 @@
           "bestRateId"
         ]
       },
+      "DepositRate": {
+        "type": "object",
+        "properties": {
+          "anchorId": {
+            "type": "string"
+          },
+          "anchorName": {
+            "type": "string"
+          },
+          "corridorId": {
+            "type": "string"
+          },
+          "asset": {
+            "type": "string",
+            "description": "SEP-38 identifier of the credited asset: stellar:CODE:ISSUER or stellar:native"
+          },
+          "fiatAmount": {
+            "type": "number",
+            "description": "Fiat the user pays, in units of the corridor's fiat currency"
+          },
+          "fee": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Flat fee in units of the credited asset; null when none is published"
+          },
+          "feeType": {
+            "type": "string"
+          },
+          "exchangeRate": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Effective asset credited per 1 fiat unit, net of fees; null when unreachable"
+          },
+          "totalReceived": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "minAmount": {
+            "type": "number",
+            "description": "Deposit lower bound from the anchor's SEP-24 /info, in asset units"
+          },
+          "maxAmount": {
+            "type": "number",
+            "description": "Deposit upper bound from the anchor's SEP-24 /info, in asset units"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "sep38",
+              "sep24-fee",
+              "unavailable"
+            ]
+          },
+          "referenceSource": {
+            "type": "string",
+            "description": "Names the reference price behind the estimate"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "anchorId",
+          "anchorName",
+          "corridorId",
+          "asset",
+          "fiatAmount",
+          "fee",
+          "feeType",
+          "exchangeRate",
+          "totalReceived",
+          "source",
+          "updatedAt"
+        ]
+      },
+      "DepositRateComparison": {
+        "type": "object",
+        "properties": {
+          "corridorId": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit"
+            ]
+          },
+          "rates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepositRate"
+            }
+          },
+          "bestRateId": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "anchorId": {
+                  "type": "string"
+                },
+                "anchorName": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "anchorId",
+                "anchorName",
+                "reason"
+              ]
+            }
+          }
+        },
+        "required": [
+          "corridorId",
+          "direction",
+          "rates",
+          "bestRateId",
+          "errors"
+        ]
+      },
       "DisputeRecord": {
         "type": "object",
         "properties": {
@@ -960,6 +1093,92 @@
         }
       }
     },
+    "/api/deposit-rates/{corridor}": {
+      "get": {
+        "summary": "Get indicative deposit (on-ramp) estimates for a corridor",
+        "description": "Returns per-anchor SEP-24 deposit estimates for the given corridor: fiat in, asset credited net of published fees, with per-anchor failures isolated into `errors`. Every figure is indicative; the anchor sets the firm conversion inside its interactive deposit flow.",
+        "tags": [
+          "Rates"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "usdc-ngn",
+              "description": "Corridor ID (e.g. usdc-ngn, usdc-kes)"
+            },
+            "required": true,
+            "description": "Corridor ID (e.g. usdc-ngn, usdc-kes)",
+            "name": "corridor",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "150000",
+              "description": "Fiat amount to deposit (positive decimal); defaults to 100"
+            },
+            "required": false,
+            "description": "Fiat amount to deposit (positive decimal); defaults to 100",
+            "name": "amount",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "stellar:USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+              "description": "SEP-38 asset identifier to credit; defaults to the corridor's asset"
+            },
+            "required": false,
+            "description": "SEP-38 asset identifier to credit; defaults to the corridor's asset",
+            "name": "asset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deposit estimates for the corridor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepositRateComparison"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown corridor or invalid amount",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The deposit estimate could not be computed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/intent/offramp": {
       "post": {
         "summary": "Submit an off-ramp intent",
@@ -1102,6 +1321,142 @@
                     "error",
                     "retryAfter"
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/anchors/{id}/price-history": {
+      "get": {
+        "summary": "Get anchor SEP-38 price history",
+        "description": "Returns recorded SEP-38 price observations for an anchor corridor, downsampled to at most 500 points (evenly spaced; first and last retained).",
+        "tags": [
+          "Anchors"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Anchor identifier"
+            },
+            "required": true,
+            "description": "Anchor identifier",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Corridor id served by the anchor (default: first corridor)"
+            },
+            "required": false,
+            "description": "Corridor id served by the anchor (default: first corridor)",
+            "name": "corridor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "description": "Lookback window in days, 1–90 (default 7)",
+              "example": 7
+            },
+            "required": false,
+            "description": "Lookback window in days, 1–90 (default 7)",
+            "name": "days",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price history series",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "anchorId": {
+                      "type": "string"
+                    },
+                    "corridor": {
+                      "type": "string"
+                    },
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "observedAt": {
+                            "type": "string"
+                          },
+                          "price": {
+                            "type": "string"
+                          },
+                          "totalPrice": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "observedAt",
+                          "price",
+                          "totalPrice",
+                          "source"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "anchorId",
+                    "corridor",
+                    "points"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid params or corridor not served",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown anchor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Quote store unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }

@@ -218,7 +218,8 @@ test.describe('[#455] SEP-6 withdraw happy path', () => {
     );
 
     await page.goto(trackingUrl());
-    await page.waitForTimeout(5_000);
+    await expect(page.getByText('Confirming on Stellar')).toBeVisible({ timeout: 30_000 });
+    await page.waitForLoadState('networkidle');
 
     expect(errors, `Unexpected JS errors: ${errors.join('; ')}`).toHaveLength(0);
   });

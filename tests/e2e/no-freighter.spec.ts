@@ -149,7 +149,7 @@ test.describe('[#106] Freighter not installed', () => {
     page.on('pageerror', (err) => errors.push(err.message));
 
     await page.goto('/offramp');
-    await page.waitForTimeout(3_000);
+    await expect(page.getByLabel('Amount (USDC)')).toBeVisible();
 
     expect(errors, `Unexpected JS errors: ${errors.join('; ')}`).toHaveLength(0);
   });

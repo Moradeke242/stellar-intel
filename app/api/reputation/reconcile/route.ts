@@ -21,7 +21,9 @@ async function runReconciler(): Promise<{
   results: unknown[];
 }> {
   const store = getReputationStore();
-  const pending = await store.query({ pendingReconciliationOnly: true });
+  // Horizon reconciliation is defined for off-ramps (user → anchor payment);
+  // deposit reconciliation is a separate issue (ONR032 "out of scope").
+  const pending = await store.query({ pendingReconciliationOnly: true, direction: 'withdraw' });
 
   // Map outcome-log rows into the reconciler's input shape. Leaving `settledAt`
   // unset marks them all due (we already filtered to the pending set), so rows

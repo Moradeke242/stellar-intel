@@ -195,6 +195,7 @@ The full doc surface lives under [`docs/`](docs/). Start with:
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | System diagram, intent router, Soroban oracle, MCP/agent surface, SEP-10/24/38 flow.                                               |
 | [docs/ROADMAP.md](docs/ROADMAP.md)                     | Milestone waves v1.0 → v6, with tickable per-wave scope.                                                                           |
 | [docs/INTENT_API.md](docs/INTENT_API.md)               | Intent schema, signing rules, replay protection, `curl` + TS snippets.                                                             |
+| [docs/ONRAMP.md](docs/ONRAMP.md)                       | On-ramp (fiat → Stellar) flow: indicative quotes, trustlines, claimable balances, limits, KYC.                                     |
 | [docs/GRAPHQL_API.md](docs/GRAPHQL_API.md)             | Additive GraphQL surface over the same REST v1 resources — schema, example queries, error shape.                                   |
 | [docs/ANCHOR_REPUTATION.md](docs/ANCHOR_REPUTATION.md) | Scoring methodology, composite formula, dispute process.                                                                           |
 | [docs/ORACLE_SPEC.md](docs/ORACLE_SPEC.md)             | Soroban contract interface, consumer examples, publisher whitelist policy.                                                         |
